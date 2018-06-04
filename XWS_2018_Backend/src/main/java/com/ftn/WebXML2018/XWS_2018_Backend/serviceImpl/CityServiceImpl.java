@@ -3,12 +3,14 @@ package com.ftn.WebXML2018.XWS_2018_Backend.serviceImpl;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.City;
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.Country;
 import com.ftn.WebXML2018.XWS_2018_Backend.repository.CityRepository;
 import com.ftn.WebXML2018.XWS_2018_Backend.service.CityService;
 
+@Service
 public class CityServiceImpl implements CityService{
 
 	@Autowired

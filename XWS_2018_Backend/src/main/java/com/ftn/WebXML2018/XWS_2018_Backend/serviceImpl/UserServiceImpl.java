@@ -12,6 +12,7 @@ import com.ftn.WebXML2018.XWS_2018_Backend.entity.User;
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.UserRoles;
 import com.ftn.WebXML2018.XWS_2018_Backend.repository.CityRepository;
 import com.ftn.WebXML2018.XWS_2018_Backend.repository.CountryRepository;
+import com.ftn.WebXML2018.XWS_2018_Backend.repository.RegisteredUserRepository;
 import com.ftn.WebXML2018.XWS_2018_Backend.repository.UserRepository;
 import com.ftn.WebXML2018.XWS_2018_Backend.repository.UserRolesRepository;
 import com.ftn.WebXML2018.XWS_2018_Backend.service.UserService;
@@ -21,6 +22,9 @@ public class UserServiceImpl implements UserService{
 
 	@Autowired
 	private UserRepository userRepository;
+	
+	@Autowired
+	private RegisteredUserRepository registeredUserRepository;
 	
 	@Autowired
 	private CityRepository cityRepository;
@@ -45,7 +49,7 @@ public class UserServiceImpl implements UserService{
 
 	@Override
 	public User register(String username, String password, String ime, String prezime, String grad, String drzava,
-			String adresa, String email, String telefon) {
+			String adresa, String email, String telefon, String postbroj) {
 		
 		if(username.isEmpty() || password.isEmpty() || ime.isEmpty() || prezime.isEmpty() || grad.isEmpty() || drzava.isEmpty()) {
 			return null;
@@ -65,24 +69,29 @@ public class UserServiceImpl implements UserService{
 			return null;
 		}
 		
-		List<City> tempCities = cityRepository.findByCountryAndName(country, grad);
+		List<City> tempCities = cityRepository.findByCountryAndNameAndPostcode(country, grad, postbroj);
 		City city = null;
 		
 		if(!tempCities.isEmpty()) {
 			city = tempCities.get(0);
 		}else {
-			city = new City(grad, country);
+			city = new City(grad, country, postbroj);
 			city = cityRepository.save(city);
 		}
 		
 		//Kod mene je registrovani korisnik imao id = 2
 		UserRoles role = userRolesRepository.getOne(new Long(2));
 		
-		RegisteredUser regUser = new RegisteredUser(null, email, telefon, true);
-		User newUser = new User(null, username, password, ime, prezime, role, city, regUser, null ,adresa); 
+		if(role == null) {
+			return null;
+		}
+		
+		User newUser = new User(null, username, password, ime, prezime, role, city, null, null, adresa); 
 		
 		try {
 			newUser = userRepository.save(newUser);
+			RegisteredUser regUser = new RegisteredUser(newUser.getId(), email, telefon, true);
+			regUser = registeredUserRepository.save(regUser);
 		}catch(Exception e) {
 			return null;
 		}

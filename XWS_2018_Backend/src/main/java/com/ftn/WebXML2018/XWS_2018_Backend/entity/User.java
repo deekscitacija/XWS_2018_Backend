@@ -45,11 +45,11 @@ public class User {
 	@Size(max = 30)
 	private String homeAddress;
 	
-	@OneToOne(cascade = CascadeType.ALL, optional = true)
+	@OneToOne(optional = true)
     @PrimaryKeyJoinColumn
     private AgentUser agentUser;
 	
-	@OneToOne(cascade = CascadeType.ALL, optional = true)
+	@OneToOne(optional = true)
     @PrimaryKeyJoinColumn
     private RegisteredUser registeredUser;
 	

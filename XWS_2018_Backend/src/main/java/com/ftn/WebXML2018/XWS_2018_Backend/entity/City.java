@@ -19,6 +19,10 @@ public class City {
 	@Size(max = 90)
 	private String name;
 	
+	@Column(nullable = true)
+	@Size(max = 90)
+	private String postcode;
+	
 	@ManyToOne(optional=false)
 	private Country country;
 	
@@ -26,17 +30,19 @@ public class City {
 		
 	}
 
-	public City(Long id, String name, Country country) {
+	public City(Long id, String name, Country country, String postcode) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.country = country;
+		this.postcode = postcode;
 	}
 
-	public City(String name, Country country) {
+	public City(String name, Country country, String postcode) {
 		super();
 		this.name = name;
 		this.country = country;
+		this.postcode = postcode;
 	}
 
 	public Long getId() {
@@ -63,4 +69,12 @@ public class City {
 		this.country = country;
 	}
 
+	public String getPostcode() {
+		return postcode;
+	}
+
+	public void setPostcode(String postcode) {
+		this.postcode = postcode;
+	}
+	
 }

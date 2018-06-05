@@ -32,20 +32,21 @@ public class RegisterController {
 			@RequestParam(value="adresa", required = true) String adresa,
 			@RequestParam(value="email", required = true) String email,
 			@RequestParam(value="telefon", required = true) String telefon,
+			@RequestParam(value="postbroj", required = true) String postbroj,
 			HttpServletResponse response
 			) {
 		
-		System.out.println(username+" "+password+" "+ime+" "+prezime+" "+grad+" "+drzava+" "+adresa+" "+email+" "+telefon);
+		System.out.println(username+" "+password+" "+ime+" "+prezime+" "+grad+" "+drzava+" "+adresa+" "+email+" "+telefon+" "+postbroj);
 		
-		User theUser = userService.register(username.trim(), password, ime.trim(), prezime.trim(), grad.trim(), drzava, 
-				adresa.trim().isEmpty() ? null : adresa.trim(), email.trim(), telefon.trim().isEmpty() ? null : telefon.trim());
+		User newUser = userService.register(username.trim(), password, ime.trim(), prezime.trim(), grad.trim(), drzava, 
+				adresa.trim().isEmpty() ? null : adresa.trim(), email.trim(), telefon.trim().isEmpty() ? null : telefon.trim(), postbroj.trim().isEmpty() ? null : postbroj.trim());
 		
-		if(theUser == null) {
+		if(newUser == null) {
 			response.setStatus(HttpStatus.BAD_REQUEST.value());
 			new ResponseWrapper<>(null, false);
 		}
 		
-		return new ResponseWrapper<User>(theUser, true);
+		return new ResponseWrapper<User>(newUser, true);
 	}
 
 }

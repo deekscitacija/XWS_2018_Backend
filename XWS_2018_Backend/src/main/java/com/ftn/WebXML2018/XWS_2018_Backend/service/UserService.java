@@ -9,7 +9,7 @@ public interface UserService {
 	public User getUser(Long id);
 	
 	public User register(String username, String password, String ime, String prezime, String grad, String drzava,
-			String adresa, String email, String telefon);
+			String adresa, String email, String telefon, String postbroj);
 	
 
 }

@@ -2,8 +2,6 @@ package com.ftn.WebXML2018.XWS_2018_Backend.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.validation.constraints.Size;
 
@@ -11,7 +9,6 @@ import javax.validation.constraints.Size;
 public class AgentUser {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 	
 	@Column(nullable = false)

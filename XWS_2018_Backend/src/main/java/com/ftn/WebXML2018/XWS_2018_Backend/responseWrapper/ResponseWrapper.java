@@ -1,7 +1,5 @@
 package com.ftn.WebXML2018.XWS_2018_Backend.responseWrapper;
 
-import org.springframework.http.HttpStatus;
-
 public class ResponseWrapper<T> {
 	
 	private T responseBody;

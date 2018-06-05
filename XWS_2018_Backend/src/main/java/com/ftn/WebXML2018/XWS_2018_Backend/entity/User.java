@@ -41,6 +41,10 @@ public class User {
 	@ManyToOne(optional = false)
 	private City city;
 	
+	@Column(nullable = true)
+	@Size(max = 30)
+	private String homeAddress;
+	
 	@OneToOne(cascade = CascadeType.ALL, optional = true)
     @PrimaryKeyJoinColumn
     private AgentUser agentUser;
@@ -54,7 +58,7 @@ public class User {
 	}
 
 	public User(Long id, String username, String password, String name, String surname, UserRoles userRole, 
-			City city, RegisteredUser registeredUser, AgentUser agentUser) {
+			City city, RegisteredUser registeredUser, AgentUser agentUser, String homeAddress) {
 		super();
 		this.id = id;
 		this.username = username;
@@ -65,9 +69,10 @@ public class User {
 		this.city = city;
 		this.registeredUser = registeredUser;
 		this.agentUser = agentUser;
+		this.homeAddress = homeAddress;
 	}
 	
-	public User(String username, String password, String name, String surname, UserRoles userRole, City city) {
+	public User(String username, String password, String name, String surname, UserRoles userRole, City city, String homeAddress) {
 		super();
 		this.username = username;
 		this.password = password;
@@ -75,6 +80,7 @@ public class User {
 		this.surname = surname;
 		this.userRole = userRole;
 		this.city = city;
+		this.homeAddress = homeAddress;
 	}
 
 	public Long getId() {
@@ -131,6 +137,14 @@ public class User {
 
 	public void setCity(City city) {
 		this.city = city;
+	}
+
+	public String getHomeAddress() {
+		return homeAddress;
+	}
+
+	public void setHomeAddress(String homeAddress) {
+		this.homeAddress = homeAddress;
 	}
 
 	public AgentUser getAgentUser() {

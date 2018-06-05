@@ -16,7 +16,7 @@ public class CountryServiceImpl implements CountryService{
 	private CountryRepository countryRepository;
 
 	@Override
-	public Country getOne(Integer id) {
+	public Country getOne(Long id) {
 		
 		return countryRepository.findOne(id);
 	}

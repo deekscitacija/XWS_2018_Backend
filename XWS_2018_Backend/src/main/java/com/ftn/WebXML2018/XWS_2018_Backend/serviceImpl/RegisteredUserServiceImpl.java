@@ -20,7 +20,7 @@ public class RegisteredUserServiceImpl implements RegisteredUserService{
 	}
 
 	@Override
-	public RegisteredUser getRegUser(Integer id) {
+	public RegisteredUser getRegUser(Long id) {
 		
 		return registeredUserRepository.findOne(id);
 	}

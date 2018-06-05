@@ -7,7 +7,7 @@ import com.ftn.WebXML2018.XWS_2018_Backend.entity.Country;
 
 public interface CityService {
 	
-	public City getOne(Integer id);
+	public City getOne(Long id);
 	
 	public City saveCity(City city);
 	

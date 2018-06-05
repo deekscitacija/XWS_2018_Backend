@@ -6,6 +6,6 @@ public interface RegisteredUserService {
 	
 	public RegisteredUser saveRegUser(RegisteredUser user);
 	
-	public RegisteredUser getRegUser(Integer id);
+	public RegisteredUser getRegUser(Long id);
 
 }

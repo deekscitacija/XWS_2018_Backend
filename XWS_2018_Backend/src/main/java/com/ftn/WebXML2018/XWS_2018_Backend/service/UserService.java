@@ -6,6 +6,6 @@ public interface UserService {
 	
 	public User saveUser(User user);
 	
-	public User getUser(Integer id);
+	public User getUser(Long id);
 
 }

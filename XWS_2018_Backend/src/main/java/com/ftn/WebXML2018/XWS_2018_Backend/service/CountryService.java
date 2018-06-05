@@ -6,7 +6,7 @@ import com.ftn.WebXML2018.XWS_2018_Backend.entity.Country;
 
 public interface CountryService {
 
-	public Country getOne(Integer id);
+	public Country getOne(Long id);
 	
 	public List<Country> getAll();
 	

@@ -1,6 +1,5 @@
 package com.ftn.WebXML2018.XWS_2018_Backend.entity;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

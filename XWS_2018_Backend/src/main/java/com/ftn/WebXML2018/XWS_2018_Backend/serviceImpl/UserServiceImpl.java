@@ -10,6 +10,7 @@ import com.ftn.WebXML2018.XWS_2018_Backend.entity.Country;
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.RegisteredUser;
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.User;
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.UserRoles;
+import com.ftn.WebXML2018.XWS_2018_Backend.enums.UserRolesType;
 import com.ftn.WebXML2018.XWS_2018_Backend.repository.CityRepository;
 import com.ftn.WebXML2018.XWS_2018_Backend.repository.CountryRepository;
 import com.ftn.WebXML2018.XWS_2018_Backend.repository.RegisteredUserRepository;
@@ -35,6 +36,8 @@ public class UserServiceImpl implements UserService{
 	@Autowired
 	private UserRolesRepository userRolesRepository;
 	
+	/* ------- METODE --------- */
+	
 	@Override
 	public User saveUser(User user) {
 		
@@ -45,6 +48,12 @@ public class UserServiceImpl implements UserService{
 	public User getUser(Long id) {
 		
 		return userRepository.findOne(id);
+	}
+	
+	@Override
+	public User getByUsername(String username) {
+		
+		return userRepository.getByUsername(username);
 	}
 
 	@Override
@@ -79,8 +88,7 @@ public class UserServiceImpl implements UserService{
 			city = cityRepository.save(city);
 		}
 		
-		//Kod mene je registrovani korisnik imao id = 2
-		UserRoles role = userRolesRepository.getOne(new Long(2));
+		UserRoles role = userRolesRepository.getByName(UserRolesType.REG_USER);
 		
 		if(role == null) {
 			return null;

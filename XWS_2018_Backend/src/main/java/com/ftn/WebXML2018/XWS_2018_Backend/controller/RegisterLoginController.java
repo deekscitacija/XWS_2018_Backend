@@ -2,6 +2,7 @@ package com.ftn.WebXML2018.XWS_2018_Backend.controller;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletResponse;
@@ -124,5 +125,48 @@ public class RegisterLoginController {
 		
 		return new ResponseWrapper<String>(null, "Zahtev za izmenu lozinke je poslat na Vasu email adresu.", true);
 	}
+	
+	@RequestMapping(value = "checkToken", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseWrapper<String> resetPassword(@RequestParam(value="username", required = true) String username, 
+												 @RequestParam(value="codeToken", required = true) String codeToken, 
+												 HttpServletResponse response){
+		
+		User user = userService.getByUsername(username);
+		
+		if(user == null) {
+			return new ResponseWrapper<>(null, "Neispravan username ili token, pokusajte ponovo.", false);
+		}
+		
+		List<PasswordResetToken> tokens = this.passwordResetTokenService.getTokensByUser(user);
+		
+		if(tokens.isEmpty()) {
+			return new ResponseWrapper<>(null, "Neispravan username ili token, pokusajte ponovo.", false);
+		}
+		
+		PasswordResetToken latestToken = tokens.get(0);
+
+		if(latestToken.getUser().getUsername().equals(username) && latestToken.getToken().equals(codeToken)) {
+			return new ResponseWrapper<>(null, "Uspesno unet kod za izmenu lozinke, izaberite svoju novu lozinku.", true);
+		}
+		
+		return new ResponseWrapper<>(null, "Neispravan username ili token, pokusajte ponovo.", false);
+	}
+	
+	@RequestMapping(value = "changePass", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseWrapper<String> changePassword(@RequestParam(value="username", required = true) String username,
+											      @RequestParam(value="newPass", required = true) String newPass){
+		
+		User user = userService.getByUsername(username);
+		
+		if(user == null) {
+			return new ResponseWrapper<>(null, "Greska prilikom promene lozinke.", false);
+		}
+		
+		user.setPassword(newPass.trim());
+		userService.saveUser(user);
+		
+		return new ResponseWrapper<>(null, "Uspasna izmena lozinke, mozete se prijaviti sa svojom novom lozinkom.", true);
+	}
+	
 
 }

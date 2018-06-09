@@ -9,6 +9,6 @@ import com.ftn.WebXML2018.XWS_2018_Backend.entity.User;
 
 public interface PasswordResetTokenRepository extends JpaRepository<PasswordResetToken, Long>{
 
-	List<PasswordResetToken> getByUserOrderByExpirationDateDesc(User user);
+	List<PasswordResetToken> getByUserOrderByIdDesc(User user);
 	
 }

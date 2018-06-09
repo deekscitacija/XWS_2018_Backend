@@ -25,7 +25,7 @@ public class PasswordResetTokenServiceImpl implements PasswordResetTokenService{
 	@Override
 	public List<PasswordResetToken> getTokensByUser(User user) {
 		
-		return passwordResetTokenRepository.getByUserOrderByExpirationDateDesc(user);
+		return passwordResetTokenRepository.getByUserOrderByIdDesc(user);
 	}
 
 }

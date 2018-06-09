@@ -1,7 +1,10 @@
 package com.ftn.WebXML2018.XWS_2018_Backend.serviceImpl;
 
 import javax.mail.MessagingException;
+import javax.mail.Multipart;
+import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -53,62 +56,23 @@ public class EmailServiceImpl implements EmailService{
 				  "      <td rowspan=\"2\">Unesite sigurnosni kod na ovoj stranici: </td>\r\n" + 
 				  "    </tr>\r\n" + 
 				  "    <tr>\r\n" + 
-				  "      <td>"+link+"</td>\r\n" + 
+				  "      <td><a href=\""+link+"\">Kliknite ovde</a></td>\r\n" + 
 				  "    </tr>\r\n" + 
 				  "  </table>\r\n" + 
 				  "</div>"+
 				  "</body>"+
 				  "</html>";
 		
-		helper.setText(poruka, true);
+		MimeBodyPart messageBodyPart = new MimeBodyPart();
+		messageBodyPart.setText(poruka,"UTF-8","html");
+		
+		Multipart multipart = new MimeMultipart();
+		multipart.addBodyPart(messageBodyPart);
+
+		message.setContent(multipart);
+			
 		mailSender.send(message);
-		
 	}
-	
-	/*
-	@Async
-	public void sendRezervacijaMail(ArrayList<Rezervacija> rezervacije) throws MessagingException{
-		
-		MimeMessage message = mailSender.createMimeMessage();
-		MimeMessageHelper helper = new MimeMessageHelper(message, false);
-		helper.setFrom(environment.getProperty("spring.mail.username"));
-		helper.setTo(rezervacije.get(0).getRegKorisnik().getReg_korisnik_id().getEmail());
-		helper.setSubject("Isa Pozorista i Biskopi vasa rezeracija");
-		String datumProjekcije = new SimpleDateFormat("dd-MM-YYYY HH-mm").format(new Timestamp(rezervacije.get(0).getKarta().getProjekcija().getDatum().getTime()));
-		
-		String rezPodaci = "";
-		for(Rezervacija rezervacija : rezervacije) {
-			
-			rezPodaci+="<tr>"+
-					" <td>"+rezervacija.getKarta().getProjekcija().getPredFilm().getNaziv()+"</td>" + 
-					"            <td>"+rezervacija.getKarta().getProjekcija().getSala().getPozBio().getNaziv()+"</td>" + 
-					"            <td>" + rezervacija.getKarta().getProjekcija().getSala().getNaziv()+"</td>"+ 
-					"            <td>RSD "+rezervacija.getKarta().getSediste().getSegment().getTip().getCena()+" "+rezervacija.getKarta().getSediste().getSegment().getTip().getNaziv()+"</td>" + 
-					"            <td>"+rezervacija.getKarta().getSediste().getId()+"</td>" + 
-					"            <td>"+datumProjekcije+"</td>"						
-					+"</tr>";	
-		}
-		
-		String mailMessage = "<html><body><p>Postovani "+rezervacije.get(0).getRegKorisnik().getReg_korisnik_id().getIme()+", ovo su podaci o vasoj rezervaciji: <br>"
-				+"<table><tr>" + 
-				"          <th>Film/Predstava</th>" + 
-				"          <th>Bioskop/Pozoriste</th>"+ 
-				"          <th>Sala</th>" + 
-				"          <th>Cena</th>" + 
-				"          <th>Sifra mesta</th>" + 
-				"          <th>Datum</th>" + 
-				"        </tr>"+
-				
-				
-				rezPodaci+
-				
-				"</table><br></p><p>Vasu rezervaciju mozete otkazati do pola sata pred pocetak predstave ili projekcije"
-				+ "</p></body></html>";
-			helper.setText(mailMessage, true);
-			
-			mailSender.send(message);
-	}
-	
-	*/
+ 
 	
 }

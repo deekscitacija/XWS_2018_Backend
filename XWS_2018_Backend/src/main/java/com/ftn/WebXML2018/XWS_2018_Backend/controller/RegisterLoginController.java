@@ -5,12 +5,15 @@ import java.util.Date;
 import java.util.List;
 
 import javax.mail.MessagingException;
+import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -21,6 +24,8 @@ import com.ftn.WebXML2018.XWS_2018_Backend.entity.PasswordResetToken;
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.User;
 import com.ftn.WebXML2018.XWS_2018_Backend.helpClasses.RandomStringGenerator;
 import com.ftn.WebXML2018.XWS_2018_Backend.responseWrapper.ResponseWrapper;
+import com.ftn.WebXML2018.XWS_2018_Backend.security.TokenUtils;
+import com.ftn.WebXML2018.XWS_2018_Backend.securityBeans.CustomUserDetailsFactory;
 import com.ftn.WebXML2018.XWS_2018_Backend.service.EmailService;
 import com.ftn.WebXML2018.XWS_2018_Backend.service.PasswordResetTokenService;
 import com.ftn.WebXML2018.XWS_2018_Backend.service.UserService;
@@ -40,6 +45,13 @@ public class RegisterLoginController {
 	
 	@Autowired
 	private EmailService emailService;
+	
+	@Autowired
+	private TokenUtils tokenUtils;
+	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+	
 	
 	@RequestMapping(value = "register", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseWrapper<User> register(
@@ -70,8 +82,8 @@ public class RegisterLoginController {
 	}
 	
 	@RequestMapping(value = "login", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseWrapper<UserDTO> login(@RequestParam(value="username", required = true) String username,
-										  @RequestParam(value="password", required=true) String password){
+	public ResponseWrapper<String> login(@RequestParam(value="username", required = true) String username,
+										 @RequestParam(value="password", required=true) String password){
 		
 		User user = userService.getByUsername(username);
 		
@@ -79,14 +91,27 @@ public class RegisterLoginController {
 			return new ResponseWrapper<>(null, "Nepostojeci username ili password.", false);
 		}
 		
-		if(!user.getPassword().equals(password)) {
+		if(!passwordEncoder.matches(password, user.getPassword())) {
 			return new ResponseWrapper<>(null, "Nepostojeci username ili password.", false);
+		}
+		
+		String token = tokenUtils.generateToken(CustomUserDetailsFactory.createCustomUserDetails(user));
+		
+		return new ResponseWrapper<String>(token, true);
+	}
+	
+	@PreAuthorize("hasAnyAuthority('REG_USER', 'ADMIN', 'AGENT')")
+	@RequestMapping(value = "getUserFromToken", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseWrapper<UserDTO> getUserFromToken(ServletRequest request){
+		
+		User user = userService.getUserFromToken(request, tokenUtils);
+		
+		if(user == null) {
+			return new ResponseWrapper<>(null, "Greska prilikom dobavljanja korisnika.", false);
 		}
 		
 		ModelMapper modelMapper = new ModelMapper();
 		UserDTO retVal = modelMapper.map(user, UserDTO.class);
-		
-		System.out.println("USLOOO EEE");
 		
 		return new ResponseWrapper<UserDTO>(retVal, true);
 	}
@@ -131,6 +156,10 @@ public class RegisterLoginController {
 												 @RequestParam(value="codeToken", required = true) String codeToken, 
 												 HttpServletResponse response){
 		
+		if(username.trim().isEmpty() || codeToken.trim().isEmpty()) {
+			return new ResponseWrapper<>(null, "Neispravan username ili token, pokusajte ponovo.", false);
+		}
+		
 		User user = userService.getByUsername(username);
 		
 		if(user == null) {
@@ -156,16 +185,20 @@ public class RegisterLoginController {
 	public ResponseWrapper<String> changePassword(@RequestParam(value="username", required = true) String username,
 											      @RequestParam(value="newPass", required = true) String newPass){
 		
+		if(username.trim().isEmpty() || newPass.trim().isEmpty()) {
+			return new ResponseWrapper<>(null, "Greska prilikom promene lozinke.", false);
+		}
+		
 		User user = userService.getByUsername(username);
 		
 		if(user == null) {
 			return new ResponseWrapper<>(null, "Greska prilikom promene lozinke.", false);
 		}
 		
-		user.setPassword(newPass.trim());
+		user.setPassword(this.passwordEncoder.encode(newPass));
 		userService.saveUser(user);
 		
-		return new ResponseWrapper<>(null, "Uspasna izmena lozinke, mozete se prijaviti sa svojom novom lozinkom.", true);
+		return new ResponseWrapper<>(null, "Uspesna izmena lozinke, mozete se prijaviti sa svojom novom lozinkom.", true);
 	}
 	
 

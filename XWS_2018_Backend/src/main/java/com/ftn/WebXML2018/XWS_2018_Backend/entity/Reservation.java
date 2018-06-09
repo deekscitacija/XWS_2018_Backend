@@ -34,12 +34,6 @@ public class Reservation {
 	@Column(nullable = false)
 	private boolean comfirmed;
 	
-	@Column(nullable = true)
-	private int rating;
-	
-	@Column(nullable = true)
-	private String comment;
-	
 	@Column(nullable = false)
 	@Size(max = 60)
 	private String subjectName;
@@ -58,33 +52,27 @@ public class Reservation {
 		
 	}
 
-	public Reservation(Long id, Date fromDate, Date toDate, double totalPrice, boolean comfirmed, int rating,
-			String comment, String subjectName, String subjectSurname, RegisteredUser registeredUser,
-			BookingUnit bookingUnit) {
+	public Reservation(Long id, Date fromDate, Date toDate, double totalPrice, boolean comfirmed, 
+			String subjectName, String subjectSurname, RegisteredUser registeredUser, BookingUnit bookingUnit) {
 		super();
 		this.id = id;
 		this.fromDate = fromDate;
 		this.toDate = toDate;
 		this.totalPrice = totalPrice;
 		this.comfirmed = comfirmed;
-		this.rating = rating;
-		this.comment = comment;
 		this.subjectName = subjectName;
 		this.subjectSurname = subjectSurname;
 		this.registeredUser = registeredUser;
 		this.bookingUnit = bookingUnit;
 	}
 	
-	public Reservation(Date fromDate, Date toDate, double totalPrice, boolean comfirmed, int rating,
-			String comment, String subjectName, String subjectSurname, RegisteredUser registeredUser,
-			BookingUnit bookingUnit) {
+	public Reservation(Date fromDate, Date toDate, double totalPrice, boolean comfirmed,
+			String subjectName, String subjectSurname, RegisteredUser registeredUser, BookingUnit bookingUnit) {
 		super();
 		this.fromDate = fromDate;
 		this.toDate = toDate;
 		this.totalPrice = totalPrice;
 		this.comfirmed = comfirmed;
-		this.rating = rating;
-		this.comment = comment;
 		this.subjectName = subjectName;
 		this.subjectSurname = subjectSurname;
 		this.registeredUser = registeredUser;
@@ -129,22 +117,6 @@ public class Reservation {
 
 	public void setComfirmed(boolean comfirmed) {
 		this.comfirmed = comfirmed;
-	}
-
-	public int getRating() {
-		return rating;
-	}
-
-	public void setRating(int rating) {
-		this.rating = rating;
-	}
-
-	public String getComment() {
-		return comment;
-	}
-
-	public void setComment(String comment) {
-		this.comment = comment;
 	}
 
 	public String getSubjectName() {

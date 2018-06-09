@@ -3,6 +3,8 @@ package com.ftn.WebXML2018.XWS_2018_Backend.serviceImpl;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.City;
@@ -44,6 +46,11 @@ public class CityServiceImpl implements CityService{
 	public City saveCity(City city) {
 		
 		return cityRepository.save(city);
+	}
+
+	@Override
+	public Page<City> findByNameLike(String name, Pageable pageable) {
+		return cityRepository.findByNameLikeIgnoreCase("%"+name+"%", pageable);
 	}
 
 }

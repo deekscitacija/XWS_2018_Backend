@@ -15,6 +15,8 @@ import javax.persistence.OneToMany;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 @Entity
 public class BookingUnit {
 	
@@ -51,6 +53,10 @@ public class BookingUnit {
 	
 	@ManyToMany(fetch = FetchType.EAGER)
 	private Set<BonusFeatures> bonusFeatures;
+	
+	@OneToMany(mappedBy="bookingUnit", fetch = FetchType.EAGER)
+	@JsonBackReference
+	private Set<Reservation> reservations;
 	
 	public BookingUnit() {
 		

@@ -3,6 +3,8 @@ package com.ftn.WebXML2018.XWS_2018_Backend.serviceImpl;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.Country;
@@ -25,6 +27,12 @@ public class CountryServiceImpl implements CountryService{
 	public List<Country> getAll() {
 		
 		return countryRepository.findAll();
+	}
+
+	@Override
+	public Page<Country> findByNameLike(String name, Pageable pageable) {
+
+		return countryRepository.findByNameLikeIgnoreCase("%"+name+"%", pageable);
 	}
 	
 	

@@ -134,7 +134,7 @@ public class SearchController {
 			
 			stop--;		
 		}
-		
+		System.out.println("sagggggggg");
 		return new ResponseWrapper<ArrayList<CityCountryDTO>>(retVal,"Uspesno vracena lista gradova i drzava.", true);
 	}
 	

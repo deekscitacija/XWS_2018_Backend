@@ -1,6 +1,5 @@
 package com.ftn.WebXML2018.XWS_2018_Backend.repository;
 
-import java.util.Date;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

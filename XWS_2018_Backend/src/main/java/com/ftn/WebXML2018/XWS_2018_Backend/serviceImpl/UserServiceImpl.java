@@ -2,7 +2,11 @@ package com.ftn.WebXML2018.XWS_2018_Backend.serviceImpl;
 
 import java.util.List;
 
+import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.City;
@@ -16,6 +20,7 @@ import com.ftn.WebXML2018.XWS_2018_Backend.repository.CountryRepository;
 import com.ftn.WebXML2018.XWS_2018_Backend.repository.RegisteredUserRepository;
 import com.ftn.WebXML2018.XWS_2018_Backend.repository.UserRepository;
 import com.ftn.WebXML2018.XWS_2018_Backend.repository.UserRolesRepository;
+import com.ftn.WebXML2018.XWS_2018_Backend.security.TokenUtils;
 import com.ftn.WebXML2018.XWS_2018_Backend.service.UserService;
 
 @Service
@@ -35,6 +40,9 @@ public class UserServiceImpl implements UserService{
 	
 	@Autowired
 	private UserRolesRepository userRolesRepository;
+	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 	
 	/* ------- METODE --------- */
 	
@@ -94,7 +102,7 @@ public class UserServiceImpl implements UserService{
 			return null;
 		}
 		
-		User newUser = new User(null, username, password, ime, prezime, role, city, null, null, adresa); 
+		User newUser = new User(null, username, passwordEncoder.encode(password), ime, prezime, role, city, null, null, adresa); 
 		
 		try {
 			newUser = userRepository.save(newUser);
@@ -105,6 +113,24 @@ public class UserServiceImpl implements UserService{
 		}
 		
 		return newUser;
+	}
+
+	@Override
+	public User getUserFromToken(ServletRequest request, TokenUtils tokenUtils) {
+		
+		HttpServletRequest httpRequest = (HttpServletRequest) request;
+		String token = httpRequest.getHeader("token");
+		
+		System.out.println(token);
+		
+		if(token == null) {
+			System.out.println("TOKEN JE NULL!");
+			return null;
+		}
+		
+		String username = tokenUtils.getUsernameFromToken(token);
+
+		return userRepository.getByUsername(username);
 	}
 
 }

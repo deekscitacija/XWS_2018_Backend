@@ -20,17 +20,15 @@ public class BookingUnitServiceImpl implements BookingUnitService {
 	private BookingUnitRepository bookingUnitRepository;
 	
 	@Override
-	public Page<BookingUnit> findBookingUnitsByCity(City city, int peopleNumber, Date dateFrom, Date dateTo,
-			Pageable pageable) {
+	public Page<BookingUnit> findBookingUnitsByCity(City city, int peopleNumber, Pageable pageable) {
 		
-		return bookingUnitRepository.findBookingUnitsByCity(city, peopleNumber, dateFrom, dateTo, pageable);
+		return bookingUnitRepository.findBookingUnitsByCity(city, peopleNumber, pageable);
 	}
 
 	@Override
-	public Page<BookingUnit> findBookingUnitsByCountry(Country country, int peopleNumber, Date dateFrom, Date dateTo,
-			Pageable pageable) {
+	public Page<BookingUnit> findBookingUnitsByCountry(Country country, int peopleNumber,Pageable pageable) {
 
-		return bookingUnitRepository.findBookingUnitsByCountry(country, peopleNumber, dateFrom, dateTo, pageable);
+		return bookingUnitRepository.findBookingUnitsByCountry(country, peopleNumber, pageable);
 	}
 
 }

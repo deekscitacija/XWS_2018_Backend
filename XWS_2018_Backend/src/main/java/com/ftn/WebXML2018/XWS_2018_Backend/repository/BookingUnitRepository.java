@@ -13,9 +13,9 @@ import com.ftn.WebXML2018.XWS_2018_Backend.entity.Country;
 
 public interface BookingUnitRepository extends JpaRepository<BookingUnit,Long>{
 	
-	@Query("select bu from BookingUnit bu INNER JOIN bu.reservations r WHERE bu.city = ?1 AND bu.peopleNumber >= ?2 AND r.fromDate NOT BETWEEN ?3 AND ?4 AND r.toDate NOT BETWEEN ?3 AND ?4")
-	public Page<BookingUnit> findBookingUnitsByCity(City city, int peopleNumber, Date dateFrom, Date dateTo, Pageable pageable);
+	@Query("select DISTINCT bu from BookingUnit bu INNER JOIN bu.reservations r WHERE bu.city = ?1 AND bu.peopleNumber >= ?2")
+	public Page<BookingUnit> findBookingUnitsByCity(City city, int peopleNumber, Pageable pageable);
 	
-	@Query("select bu from BookingUnit bu INNER JOIN bu.reservations r INNER JOIN bu.city c WHERE c.country = ?1 AND bu.peopleNumber >= ?2 AND r.fromDate NOT BETWEEN ?3 AND ?4 AND r.toDate NOT BETWEEN ?3 AND ?4")
-	public Page<BookingUnit> findBookingUnitsByCountry(Country country, int peopleNumber, Date dateFrom, Date dateTo, Pageable pageable);
+	@Query("select DISTINCT bu from BookingUnit bu INNER JOIN bu.reservations r INNER JOIN bu.city c WHERE c.country = ?1 AND bu.peopleNumber >= ?2")
+	public Page<BookingUnit> findBookingUnitsByCountry(Country country, int peopleNumber, Pageable pageable);
 }

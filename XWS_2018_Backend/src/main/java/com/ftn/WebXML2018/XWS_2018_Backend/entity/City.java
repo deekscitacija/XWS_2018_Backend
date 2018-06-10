@@ -76,5 +76,9 @@ public class City {
 	public void setPostcode(String postcode) {
 		this.postcode = postcode;
 	}
-	
+
+	@Override
+	public String toString() {
+		return "City [id=" + id + ", name=" + name + ", postcode=" + postcode + ", country=" + country + "]";
+	}
 }

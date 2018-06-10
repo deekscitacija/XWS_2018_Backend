@@ -172,5 +172,18 @@ public class BookingUnit {
 	public void setBonusFeatures(Set<BonusFeatures> bonusFeatures) {
 		this.bonusFeatures = bonusFeatures;
 	}
+	
+	public Set<Reservation> getReservations() {
+		return reservations;
+	}
 
+	public void setReservations(Set<Reservation> reservations) {
+		this.reservations = reservations;
+	}
+
+	@Override
+	public String toString() {
+		return "BookingUnit [id=" + id + ", address=" + address + ", city=" + city + ", description=" + description
+				+ ", peopleNumber=" + peopleNumber + ", reservations=" + reservations + "]";
+	}
 }

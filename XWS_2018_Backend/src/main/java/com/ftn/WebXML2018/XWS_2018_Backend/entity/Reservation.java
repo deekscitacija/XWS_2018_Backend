@@ -150,5 +150,11 @@ public class Reservation {
 	public void setBookingUnit(BookingUnit bookingUnit) {
 		this.bookingUnit = bookingUnit;
 	}
-	
+
+	@Override
+	public String toString() {
+		return "Reservation [id=" + id + ", fromDate=" + fromDate + ", toDate=" + toDate + ", totalPrice=" + totalPrice
+				+ ", comfirmed=" + comfirmed + ", subjectName=" + subjectName + ", subjectSurname=" + subjectSurname
+				+ "]";
+	}
 }

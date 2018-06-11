@@ -121,8 +121,6 @@ public class UserServiceImpl implements UserService{
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
 		String token = httpRequest.getHeader("token");
 		
-		System.out.println(token);
-		
 		if(token == null) {
 			System.out.println("TOKEN JE NULL!");
 			return null;
@@ -131,6 +129,63 @@ public class UserServiceImpl implements UserService{
 		String username = tokenUtils.getUsernameFromToken(token);
 
 		return userRepository.getByUsername(username);
+	}
+
+	@Override
+	public User changeUserInfo(User user, String ime, String prezime, String grad, String drzava, String adresa,
+			String email, String telefon, String postbroj) {
+		
+		if(!ime.equals(user.getName()) && !ime.isEmpty()) {
+			user.setName(ime);
+		}
+		
+		if(!prezime.equals(user.getSurname()) && !prezime.isEmpty()) {
+			user.setSurname(prezime);
+		}
+		
+		Long drzavaIdVal = null;
+		
+		try {
+			drzavaIdVal = Long.parseLong(drzava);
+		}catch(NumberFormatException e) {
+			return null;
+		}
+		
+		Country country = countryRepository.findOne(drzavaIdVal);
+		
+		if(country == null) {
+			return null;
+		}
+		
+		List<City> tempCities = cityRepository.findByCountryAndNameAndPostcode(country, grad, postbroj);
+		City city = null;
+		
+		if(!tempCities.isEmpty()) {
+			city = tempCities.get(0);
+		}else {
+			city = new City(grad, country, postbroj);
+			city = cityRepository.save(city);
+		}
+		
+		if(!user.getCity().getId().equals(city.getId())) {
+			user.setCity(city);
+		}
+		
+		if(!adresa.equals(user.getHomeAddress())) {
+			user.setHomeAddress(adresa.isEmpty() ? null : adresa);
+		}
+		
+		if(!email.equals(user.getRegisteredUser().getEmail()) && !email.isEmpty()) {
+			user.getRegisteredUser().setEmail(email);
+		}
+		
+		if(!telefon.equals(user.getRegisteredUser().getPhoneNumber())) {
+			user.getRegisteredUser().setPhoneNumber(telefon.isEmpty() ? null : telefon);
+		}
+		
+		registeredUserRepository.save(user.getRegisteredUser());
+		
+		return userRepository.save(user);
 	}
 
 }

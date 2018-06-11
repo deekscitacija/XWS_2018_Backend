@@ -20,28 +20,28 @@ public class Message {
 	private String content;
 	
 	@OneToOne(optional = false)
-	private RegisteredUser registeredUser;
+	private User sender;
 	
 	@OneToOne(optional = false)
-	private AgentUser agentUser; 
+	private User recipient; 
 	
 	public Message() {
 		
 	}
 
-	public Message(Long id, String content, RegisteredUser registeredUser, AgentUser agentUser) {
+	public Message(Long id, String content, User sender, User recipient) {
 		super();
 		this.id = id;
 		this.content = content;
-		this.registeredUser = registeredUser;
-		this.agentUser = agentUser;
+		this.sender = sender;
+		this.recipient = recipient;
 	}
 	
-	public Message(String content, RegisteredUser registeredUser, AgentUser agentUser) {
+	public Message(String content, User sender, User recipient) {
 		super();
 		this.content = content;
-		this.registeredUser = registeredUser;
-		this.agentUser = agentUser;
+		this.sender = sender;
+		this.recipient = recipient;
 	}
 
 	public Long getId() {
@@ -60,20 +60,20 @@ public class Message {
 		this.content = content;
 	}
 
-	public RegisteredUser getRegisteredUser() {
-		return registeredUser;
+	public User getSender() {
+		return sender;
 	}
 
-	public void setRegisteredUser(RegisteredUser registeredUser) {
-		this.registeredUser = registeredUser;
+	public void setSender(User sender) {
+		this.sender = sender;
 	}
 
-	public AgentUser getAgentUser() {
-		return agentUser;
+	public User getRecipient() {
+		return recipient;
 	}
 
-	public void setAgentUser(AgentUser agentUser) {
-		this.agentUser = agentUser;
+	public void setRecipient(User recipient) {
+		this.recipient = recipient;
 	}
 	
 }

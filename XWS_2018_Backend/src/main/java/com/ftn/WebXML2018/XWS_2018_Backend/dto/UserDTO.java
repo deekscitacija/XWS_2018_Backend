@@ -1,5 +1,7 @@
 package com.ftn.WebXML2018.XWS_2018_Backend.dto;
 
+import com.ftn.WebXML2018.XWS_2018_Backend.entity.City;
+import com.ftn.WebXML2018.XWS_2018_Backend.entity.RegisteredUser;
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.UserRoles;
 
 public class UserDTO {
@@ -7,16 +9,27 @@ public class UserDTO {
 	private Long id;
 	private String username;
 	private UserRoles userRole;
+	private String name;
+	private String surname;
+	private String homeAddress;
+	private RegisteredUser registeredUser;
+	private City city;
 	
 	public UserDTO() {
 		
 	}
 
-	public UserDTO(Long id, String username, UserRoles userRole) {
+	public UserDTO(Long id, String username, UserRoles userRole, String name, String surname, String homeAddress, 
+			RegisteredUser registeredUser, City city) {
 		super();
 		this.id = id;
 		this.username = username;
 		this.userRole = userRole;
+		this.name = name;
+		this.surname = surname;
+		this.homeAddress = homeAddress;
+		this.registeredUser = registeredUser;
+		this.city = city;
 	}
 
 	public Long getId() {
@@ -41,6 +54,46 @@ public class UserDTO {
 
 	public void setUserRole(UserRoles userRole) {
 		this.userRole = userRole;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getSurname() {
+		return surname;
+	}
+
+	public void setSurname(String surname) {
+		this.surname = surname;
+	}
+
+	public String getHomeAddress() {
+		return homeAddress;
+	}
+
+	public void setHomeAddress(String homeAddress) {
+		this.homeAddress = homeAddress;
+	}
+
+	public RegisteredUser getRegisteredUser() {
+		return registeredUser;
+	}
+
+	public void setRegisteredUser(RegisteredUser registeredUser) {
+		this.registeredUser = registeredUser;
+	}
+
+	public City getCity() {
+		return city;
+	}
+
+	public void setCity(City city) {
+		this.city = city;
 	}
 
 }

@@ -17,5 +17,8 @@ public interface UserService {
 			String adresa, String email, String telefon, String postbroj);
 
 	public User getUserFromToken(ServletRequest request, TokenUtils tokenUtils);
+	
+	public User changeUserInfo(User user, String ime, String prezime, String grad, String drzava, String adresa, 
+			String email, String telefon, String postbroj);
 
 }

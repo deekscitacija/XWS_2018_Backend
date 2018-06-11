@@ -100,6 +100,7 @@ public class TokenUtils
         Map<String, Object> claims = new HashMap<>();
         claims.put("sub", userDetails.getUsername());
         claims.put("kreirano", new Date(System.currentTimeMillis()));
+        claims.put("istice", new Date(System.currentTimeMillis() + expiration * 1000));
         claims.put("uloga", userDetails.getAuthorities());
         
         User korisnik = this.userRepository.getByUsername(userDetails.getUsername());
@@ -112,7 +113,7 @@ public class TokenUtils
             claims.put("id", korisnik.getId());
         }
         catch(NullPointerException e){}
-
+       
         return Jwts.builder().setClaims(claims)
                 .setExpiration(new Date(System.currentTimeMillis() + expiration * 1000))
                 .signWith(SignatureAlgorithm.HS512, secret).compact();

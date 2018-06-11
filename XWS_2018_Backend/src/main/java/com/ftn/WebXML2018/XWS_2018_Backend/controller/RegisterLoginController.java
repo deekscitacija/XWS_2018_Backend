@@ -127,16 +127,12 @@ public class RegisterLoginController {
 		
 		String resetTokenStr = strGenerator.genRandomString8();
 		
-		System.out.println(resetTokenStr);
-		
 		long ONE_DAY_IN_MILIS = 3600000*24;
 
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(new Date());
 		long vremeKreiranja = cal.getTimeInMillis();
 		Date istice = new Date(vremeKreiranja + ONE_DAY_IN_MILIS);
-		System.out.println(new Date().toString());
-		System.out.println(istice.toString());
 		
 		PasswordResetToken resetToken = new PasswordResetToken(resetTokenStr, user, istice);
 		passwordResetTokenService.generateToken(resetToken);

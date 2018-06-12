@@ -1,6 +1,5 @@
 package com.ftn.WebXML2018.XWS_2018_Backend.entity;
 
-import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -23,6 +22,10 @@ public class BookingUnit {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
+	
+	@Column(nullable = false)
+	@Size(max = 90)
+	private String name;
 	
 	@Column(nullable = false)
 	@Size(max = 90)
@@ -62,11 +65,12 @@ public class BookingUnit {
 		
 	}
 
-	public BookingUnit(Long id, String address, String dascription, int peopleNumber, City city, AgentUser agent,
+	public BookingUnit(Long id, String name, String address, String dascription, int peopleNumber, City city, AgentUser agent,
 			Set<BonusFeatures> bonusFeatures, AccomodationType accomodationType, AccomodationCategory accomodationCategory,
 			Set<BookingUnitPicture> pictures) {
 		super();
 		this.id = id;
+		this.name = name;
 		this.address = address;
 		this.description = dascription;
 		this.peopleNumber = peopleNumber;
@@ -78,11 +82,12 @@ public class BookingUnit {
 		this.pictures = pictures;
 	}
 	
-	public BookingUnit(String address, String dascription, int peopleNumber, City city, AgentUser agent,
+	public BookingUnit(String address, String name, String dascription, int peopleNumber, City city, AgentUser agent,
 			Set<BonusFeatures> bonusFeatures, AccomodationType accomodationType, AccomodationCategory accomodationCategory,
 			Set<BookingUnitPicture> pictures) {
 		super();
 		this.address = address;
+		this.name = name;
 		this.description = dascription;
 		this.peopleNumber = peopleNumber;
 		this.city = city;
@@ -181,9 +186,20 @@ public class BookingUnit {
 		this.reservations = reservations;
 	}
 
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
 	@Override
 	public String toString() {
-		return "BookingUnit [id=" + id + ", address=" + address + ", city=" + city + ", description=" + description
-				+ ", peopleNumber=" + peopleNumber + ", reservations=" + reservations + "]";
+		return "BookingUnit [id=" + id + ", name=" + name + ", address=" + address + ", city=" + city + ", description="
+				+ description + ", peopleNumber=" + peopleNumber + ", agent=" + agent + ", accomodationType="
+				+ accomodationType + ", accomodationCategory=" + accomodationCategory + ", pictures=" + pictures
+				+ ", bonusFeatures=" + bonusFeatures + ", reservations=" + reservations + "]";
 	}
+	
 }

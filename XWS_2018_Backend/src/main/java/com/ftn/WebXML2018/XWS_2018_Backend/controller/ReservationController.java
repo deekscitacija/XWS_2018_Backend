@@ -37,7 +37,7 @@ public class ReservationController {
 	
 	@PreAuthorize("hasAuthority('REG_USER')")
 	@RequestMapping(value = "getUserReservations", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseWrapper<Page<Reservation>> getUserReservations(@RequestParam int pageNum, HttpServletRequest request, HttpServletResponse response){
+	public ResponseWrapper<Page<Reservation>> getUserReservations(@RequestParam int pageNum, @RequestParam int mode, HttpServletRequest request, HttpServletResponse response){
 		
 		User user = userService.getUserFromToken(request, tokenUtils);
 		
@@ -46,7 +46,18 @@ public class ReservationController {
 			return null;
 		}
 		
-		Page<Reservation> retVal = reservationService.findReservationsByUser(user.getRegisteredUser(), new PageRequest(pageNum-1, 5));
+		boolean isConfirmed;
+		
+		if(mode == 0) {
+			isConfirmed = false;
+		}else if(mode == 1) {
+			isConfirmed = true;
+		}else{
+			response.setStatus(HttpStatus.BAD_REQUEST.value());
+			return null;
+		}
+		
+		Page<Reservation> retVal = reservationService.findByRegisteredUserAndConfirmed(user.getRegisteredUser(), isConfirmed, new PageRequest(pageNum-1, 5));
 		
 		return new ResponseWrapper<Page<Reservation>>(retVal, true);
 	}

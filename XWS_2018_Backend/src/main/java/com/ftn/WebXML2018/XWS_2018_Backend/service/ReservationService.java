@@ -10,4 +10,6 @@ public interface ReservationService {
 
 	public Page<Reservation> findReservationsByUser(RegisteredUser user, Pageable pageable);
 	
+	public Page<Reservation> findByRegisteredUserAndConfirmed(RegisteredUser registeredUser, boolean confirmed, Pageable pageable);
+	
 }

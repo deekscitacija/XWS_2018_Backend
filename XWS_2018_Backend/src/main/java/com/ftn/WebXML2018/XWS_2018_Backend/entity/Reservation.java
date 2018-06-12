@@ -32,7 +32,7 @@ public class Reservation {
 	private double totalPrice;
 	
 	@Column(nullable = false)
-	private boolean comfirmed;
+	private boolean confirmed;
 	
 	@Column(nullable = false)
 	@Size(max = 60)
@@ -52,27 +52,27 @@ public class Reservation {
 		
 	}
 
-	public Reservation(Long id, Date fromDate, Date toDate, double totalPrice, boolean comfirmed, 
+	public Reservation(Long id, Date fromDate, Date toDate, double totalPrice, boolean confirmed, 
 			String subjectName, String subjectSurname, RegisteredUser registeredUser, BookingUnit bookingUnit) {
 		super();
 		this.id = id;
 		this.fromDate = fromDate;
 		this.toDate = toDate;
 		this.totalPrice = totalPrice;
-		this.comfirmed = comfirmed;
+		this.confirmed = confirmed;
 		this.subjectName = subjectName;
 		this.subjectSurname = subjectSurname;
 		this.registeredUser = registeredUser;
 		this.bookingUnit = bookingUnit;
 	}
 	
-	public Reservation(Date fromDate, Date toDate, double totalPrice, boolean comfirmed,
+	public Reservation(Date fromDate, Date toDate, double totalPrice, boolean confirmed,
 			String subjectName, String subjectSurname, RegisteredUser registeredUser, BookingUnit bookingUnit) {
 		super();
 		this.fromDate = fromDate;
 		this.toDate = toDate;
 		this.totalPrice = totalPrice;
-		this.comfirmed = comfirmed;
+		this.confirmed = confirmed;
 		this.subjectName = subjectName;
 		this.subjectSurname = subjectSurname;
 		this.registeredUser = registeredUser;
@@ -111,12 +111,12 @@ public class Reservation {
 		this.totalPrice = totalPrice;
 	}
 
-	public boolean isComfirmed() {
-		return comfirmed;
+	public boolean isConfirmed() {
+		return confirmed;
 	}
 
-	public void setComfirmed(boolean comfirmed) {
-		this.comfirmed = comfirmed;
+	public void setConfirmed(boolean confirmed) {
+		this.confirmed = confirmed;
 	}
 
 	public String getSubjectName() {
@@ -154,7 +154,7 @@ public class Reservation {
 	@Override
 	public String toString() {
 		return "Reservation [id=" + id + ", fromDate=" + fromDate + ", toDate=" + toDate + ", totalPrice=" + totalPrice
-				+ ", comfirmed=" + comfirmed + ", subjectName=" + subjectName + ", subjectSurname=" + subjectSurname
+				+ ", confirmed=" + confirmed + ", subjectName=" + subjectName + ", subjectSurname=" + subjectSurname
 				+ "]";
 	}
 }

@@ -22,4 +22,11 @@ public class ReservationServiceImpl implements ReservationService{
 		return reservationRepository.findByRegisteredUser(user, pageable);
 	}
 
+	@Override
+	public Page<Reservation> findByRegisteredUserAndConfirmed(RegisteredUser registeredUser, boolean confirmed,
+			Pageable pageable) {
+		
+		return reservationRepository.findByRegisteredUserAndConfirmed(registeredUser, confirmed, pageable);
+	}
+
 }

@@ -10,5 +10,7 @@ import com.ftn.WebXML2018.XWS_2018_Backend.entity.Reservation;
 public interface ReservationRepository extends JpaRepository<Reservation, Long>{
 	
 	public Page<Reservation> findByRegisteredUser(RegisteredUser registeredUser, Pageable pageable);
+	
+	public Page<Reservation> findByRegisteredUserAndConfirmed(RegisteredUser registeredUser, boolean confirmed, Pageable pageable);
 
 }

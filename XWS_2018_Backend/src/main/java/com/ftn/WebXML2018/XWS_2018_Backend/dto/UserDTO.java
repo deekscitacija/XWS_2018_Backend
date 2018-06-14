@@ -19,7 +19,7 @@ public class UserDTO {
 		
 	}
 
-	public UserDTO(Long id, String username, UserRoles userRole, String name, String surname, String homeAddress, 
+	public UserDTO(Long id, String username, String password, UserRoles userRole, String name, String surname, String homeAddress, 
 			RegisteredUser registeredUser, City city) {
 		super();
 		this.id = id;
@@ -95,5 +95,4 @@ public class UserDTO {
 	public void setCity(City city) {
 		this.city = city;
 	}
-
 }

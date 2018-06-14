@@ -1,20 +1,26 @@
 package com.ftn.WebXML2018.XWS_2018_Backend.serviceImpl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 
+import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.ftn.WebXML2018.XWS_2018_Backend.dto.UserDTO;
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.City;
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.Country;
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.RegisteredUser;
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.User;
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.UserRoles;
 import com.ftn.WebXML2018.XWS_2018_Backend.enums.UserRolesType;
+import com.ftn.WebXML2018.XWS_2018_Backend.repository.AgentUserRepository;
 import com.ftn.WebXML2018.XWS_2018_Backend.repository.CityRepository;
 import com.ftn.WebXML2018.XWS_2018_Backend.repository.CountryRepository;
 import com.ftn.WebXML2018.XWS_2018_Backend.repository.RegisteredUserRepository;
@@ -31,6 +37,9 @@ public class UserServiceImpl implements UserService{
 	
 	@Autowired
 	private RegisteredUserRepository registeredUserRepository;
+	
+	@Autowired
+	private AgentUserRepository agentUserRepository;
 	
 	@Autowired
 	private CityRepository cityRepository;
@@ -106,7 +115,7 @@ public class UserServiceImpl implements UserService{
 		
 		try {
 			newUser = userRepository.save(newUser);
-			RegisteredUser regUser = new RegisteredUser(newUser.getId(), email, telefon, true);
+			RegisteredUser regUser = new RegisteredUser(newUser.getId(), email, telefon, false);	//Admin aktivira korisnike!
 			regUser = registeredUserRepository.save(regUser);
 		}catch(Exception e) {
 			return null;
@@ -186,6 +195,126 @@ public class UserServiceImpl implements UserService{
 		registeredUserRepository.save(user.getRegisteredUser());
 		
 		return userRepository.save(user);
+	}
+
+	@Override
+	public User activateUser(Long id) {
+		User u = null;
+		try {
+			u = userRepository.findOne(id);
+			
+			if(u.getUserRole().getName().equals(UserRolesType.REG_USER)) {
+				RegisteredUser ru = u.getRegisteredUser();
+				ru.setActive(true);
+				registeredUserRepository.save(ru);
+				u.setRegisteredUser(ru);
+			} else {
+				u = null;
+			}
+		} catch(HibernateException e) {
+			e.printStackTrace();
+		}
+		
+		return u;
+	}
+
+	@Override
+	public User blockUser(Long id) {
+		User u = null;
+		try {
+			u = userRepository.findOne(id);
+			
+			if(u.getUserRole().getName().equals(UserRolesType.REG_USER)) {
+				RegisteredUser ru = u.getRegisteredUser();
+				ru.setActive(false);
+				registeredUserRepository.save(ru);
+				u.setRegisteredUser(ru); 
+			} else {
+				u = null;
+			}
+		} catch(HibernateException e) {
+			e.printStackTrace();
+		}
+		
+		return u;
+	}
+
+	@Override
+	public User deleteUser(Long id) {
+		User u = null;
+		try {
+			u = userRepository.findOne(id);
+			RegisteredUser ru = u.getRegisteredUser();
+			
+			if(u.getUserRole().getName().equals(UserRolesType.REG_USER)) {
+				registeredUserRepository.delete(ru);
+				userRepository.delete(u);
+			} else {
+				u = null;
+			}
+		} catch(HibernateException e) {
+			e.printStackTrace();
+		}
+		
+		return u;
+	}
+
+	@Override
+	public List<User> getActivatedUsers() {
+		List<User> ret = new ArrayList<User>();
+		List<RegisteredUser> regUsers = new ArrayList<RegisteredUser>();
+		List<Long> idList = new ArrayList<Long>();
+		
+		try {
+			regUsers = registeredUserRepository.findAllByActive(true);
+			
+			for(RegisteredUser reg : regUsers) {
+				idList.add(reg.getId());
+			}
+			
+			ret = userRepository.findAllByIdIn(idList);
+		} catch(Exception e) {
+			ret = null;
+		}
+		
+		return ret;
+	}
+
+	@Override
+	public List<User> getDisabledUsers() {
+		List<User> ret = new ArrayList<User>();
+		List<RegisteredUser> regUsers = new ArrayList<RegisteredUser>();
+		List<Long> idList = new ArrayList<Long>();
+		
+		try {
+			regUsers = registeredUserRepository.findAllByActive(false);
+			
+			for(RegisteredUser reg : regUsers) {
+				idList.add(reg.getId());
+			}
+			
+			ret = userRepository.findAllByIdIn(idList);
+		} catch(Exception e) {
+			ret = null;
+		}
+		
+		return ret;
+	}
+
+	@Override
+	public UserDTO convertToDTO(User u) {
+		UserDTO dto = new UserDTO();
+		
+		dto.setCity(u.getCity());
+		dto.setHomeAddress(u.getHomeAddress());
+		dto.setId(u.getId());
+		dto.setName(u.getName());
+		dto.setRegisteredUser(u.getRegisteredUser());
+		dto.setSurname(u.getSurname());
+		dto.setUsername(u.getUsername());
+		dto.setUserRole(u.getUserRole());
+
+		return dto;
 	}
 
 }

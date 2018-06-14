@@ -31,4 +31,10 @@ public class BookingUnitServiceImpl implements BookingUnitService {
 		return bookingUnitRepository.findBookingUnitsByCountry(country, peopleNumber, pageable);
 	}
 
+	@Override
+	public BookingUnit findById(Long id) {
+		
+		return bookingUnitRepository.findOne(id);
+	}
+
 }

@@ -1,10 +1,13 @@
 package com.ftn.WebXML2018.XWS_2018_Backend.controller;
 
+import javax.ws.rs.Consumes;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -28,7 +31,7 @@ public class AgentUserController {
 	
 	//Ispeglati na frontu pripremu grada i RegisteredUser-a
 	@PostMapping("/new")
-	public ResponseEntity<?> createAgent(AgentRegistrationDTO agent) {
+	public ResponseEntity<?> createAgent(@RequestBody AgentRegistrationDTO agent) {
 		ResponseWrapper<AgentUser> response = null;
 		AgentUser retFromService = null;
 		AgentUser agentUser = null;
@@ -46,8 +49,7 @@ public class AgentUserController {
 				agentUser.setId(regUser.getId());
 				agentUser.setPmb(agent.getPmb());
 				retFromService = agentService.save(agentUser);
-				message = "Agent registered successfully!";
-				resp = new ResponseWrapper<AgentUser>(retFromService, message, true);
+				resp = new ResponseWrapper<AgentUser>(retFromService, "Agent registered successfully!", true);
 				
 				return ResponseEntity.ok(resp);
 			} catch(Exception e) {

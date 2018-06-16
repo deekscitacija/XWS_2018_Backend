@@ -47,4 +47,9 @@ public class AccomodationCategoryServiceImpl implements AccomodationCategoryServ
 		
 		return success;
 	}
+
+	@Override
+	public AccomodationCategory getById(Long id) {
+		return repository.findOne(id);
+	}
 }

@@ -11,6 +11,8 @@ public interface AccomodationCategoryService {
 	
 	public AccomodationCategory getByName(String name);
 	
+	public AccomodationCategory getById(Long id);
+	
 	public AccomodationCategory updateAttribute(AccomodationCategory ac);
 	
 	public boolean deleteAttribute(Long id);

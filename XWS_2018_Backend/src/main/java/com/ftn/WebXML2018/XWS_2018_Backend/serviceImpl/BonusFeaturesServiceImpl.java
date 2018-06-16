@@ -44,4 +44,9 @@ public class BonusFeaturesServiceImpl implements BonusFeaturesService{
 		return success;
 	}
 
+	@Override
+	public BonusFeatures getById(Long id) {
+		return repository.findOne(id);
+	}
+
 }

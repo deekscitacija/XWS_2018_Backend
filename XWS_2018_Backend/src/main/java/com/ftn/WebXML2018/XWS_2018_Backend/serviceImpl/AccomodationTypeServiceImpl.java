@@ -44,4 +44,9 @@ public class AccomodationTypeServiceImpl implements AccomodationTypeService {
 		
 		return success;
 	}
+
+	@Override
+	public AccomodationType getById(Long id) {
+		return repository.findOne(id);
+	}
 }

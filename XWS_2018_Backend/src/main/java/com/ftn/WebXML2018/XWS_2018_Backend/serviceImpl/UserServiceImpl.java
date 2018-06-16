@@ -208,6 +208,7 @@ public class UserServiceImpl implements UserService{
 				ru.setActive(true);
 				registeredUserRepository.save(ru);
 				u.setRegisteredUser(ru);
+				u = userRepository.save(u);
 			} else {
 				u = null;
 			}
@@ -229,6 +230,7 @@ public class UserServiceImpl implements UserService{
 				ru.setActive(false);
 				registeredUserRepository.save(ru);
 				u.setRegisteredUser(ru); 
+				u = userRepository.save(u);
 			} else {
 				u = null;
 			}
@@ -264,9 +266,17 @@ public class UserServiceImpl implements UserService{
 		List<User> ret = new ArrayList<User>();
 		List<RegisteredUser> regUsers = new ArrayList<RegisteredUser>();
 		List<Long> idList = new ArrayList<Long>();
-		
+		UserRoles userRole = userRolesRepository.getByName(UserRolesType.REG_USER);
+
 		try {
-			regUsers = registeredUserRepository.findAllByActive(true);
+			ret = userRepository.findAllByUserRole(userRole);
+			
+			for(User u : ret) {
+				idList.add(u.getId());
+			}
+			
+			regUsers = registeredUserRepository.findAllByIdInAndActive(idList, true);
+			idList.clear();
 			
 			for(RegisteredUser reg : regUsers) {
 				idList.add(reg.getId());
@@ -285,9 +295,17 @@ public class UserServiceImpl implements UserService{
 		List<User> ret = new ArrayList<User>();
 		List<RegisteredUser> regUsers = new ArrayList<RegisteredUser>();
 		List<Long> idList = new ArrayList<Long>();
+		UserRoles userRole = userRolesRepository.getByName(UserRolesType.REG_USER);
 		
 		try {
-			regUsers = registeredUserRepository.findAllByActive(false);
+			ret = userRepository.findAllByUserRole(userRole);
+			
+			for(User u : ret) {
+				idList.add(u.getId());
+			}
+			
+			regUsers = registeredUserRepository.findAllByIdInAndActive(idList, false);
+			idList.clear();
 			
 			for(RegisteredUser reg : regUsers) {
 				idList.add(reg.getId());

@@ -10,4 +10,6 @@ public interface RegisteredUserRepository extends JpaRepository<RegisteredUser, 
 	public List<RegisteredUser> findAllByActive(boolean active);
 	
 	public List<RegisteredUser> findAllByIdIn(List<Long> idList);
+	
+	public List<RegisteredUser> findAllByIdInAndActive(List<Long> idList, boolean active);
 }

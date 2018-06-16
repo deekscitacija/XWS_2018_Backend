@@ -8,7 +8,10 @@ import javax.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -24,8 +27,8 @@ public class UserController {
 	@Autowired
 	private UserService userService;
 	
-	@GetMapping("/byActive/{active}")
-	public ResponseEntity<?> getUserDTOsByActive(@PathParam("active") boolean active) {
+	@GetMapping("/getByActive/{active}")
+	public ResponseEntity<?> getUserDTOsByActive(@PathVariable("active") Boolean active) {
 		ResponseWrapper<List<UserDTO>> wrapper = null;
 		List<User> users = null;
 		String msg = "";
@@ -56,8 +59,8 @@ public class UserController {
 		}
 	}
 	
-	@RequestMapping("/activate")
-	public ResponseEntity<?> activateUserDTO(Long id) {
+	@PutMapping("/activate/{id}")
+	public ResponseEntity<?> activateUserDTO(@PathVariable("id") Long id) {
 		User u = userService.activateUser(id);
 		ResponseWrapper<UserDTO> resp;
 		String msg = "Activation successfull!";
@@ -72,8 +75,8 @@ public class UserController {
 		return ResponseEntity.ok(resp);
 	}
 	
-	@RequestMapping("/block")
-	public ResponseEntity<?> blockUserDTO(Long id) {
+	@PutMapping("/block/{id}")
+	public ResponseEntity<?> blockUserDTO(@PathVariable("id")Long id) {
 		User u = userService.blockUser(id);
 		ResponseWrapper<UserDTO> resp;
 		String msg = "Blocking successfull!";
@@ -88,8 +91,8 @@ public class UserController {
 		return ResponseEntity.ok(resp);
 	}
 	
-	@RequestMapping("/delete")
-	public ResponseEntity<?> deleteUserDTO(Long id) {
+	@DeleteMapping("/delete/{id}")
+	public ResponseEntity<?> deleteUserDTO(@PathVariable("id")Long id) {
 		User u = userService.deleteUser(id);
 		ResponseWrapper<UserDTO> resp;
 		String msg = "Deletion successfull!";

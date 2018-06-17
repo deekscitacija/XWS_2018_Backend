@@ -14,6 +14,8 @@ public interface AccomodationTypeService {
 	
 	public AccomodationType getById(Long id);
 	
+	public List<AccomodationType> getAll();
+	
 	public AccomodationType updateAttribute(AccomodationType at);
 	
 	public boolean deleteAttribute(Long id);

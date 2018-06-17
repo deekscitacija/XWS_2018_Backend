@@ -13,6 +13,8 @@ public interface AccomodationCategoryService {
 	
 	public AccomodationCategory getById(Long id);
 	
+	public List<AccomodationCategory> getAll();
+	
 	public AccomodationCategory updateAttribute(AccomodationCategory ac);
 	
 	public boolean deleteAttribute(Long id);

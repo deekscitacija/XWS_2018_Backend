@@ -1,5 +1,7 @@
 package com.ftn.WebXML2018.XWS_2018_Backend.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ftn.WebXML2018.XWS_2018_Backend.entity.AccomodationCategory;
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.AccomodationType;
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.AccomodationType;
 import com.ftn.WebXML2018.XWS_2018_Backend.responseWrapper.ResponseWrapper;
@@ -70,6 +73,24 @@ public class AccomodationTypeController {
 			message = "No such feature";
 			ret = new ResponseWrapper<AccomodationType>(null, message, false);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ret);
+		}
+	}
+	
+	@GetMapping("/all")
+	public ResponseEntity<?> findAll() {
+		List<AccomodationType> ret = null;
+		ResponseWrapper<List<AccomodationType>> resp = null;
+		String msg = "Success!";
+		
+		try {
+			ret = service.getAll();
+			resp = new ResponseWrapper<>(ret, msg, true);
+			
+			return ResponseEntity.ok(resp);
+		} catch(Exception e) {
+			resp = new ResponseWrapper<>(ret, msg, false);
+
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(resp);
 		}
 	}
 	

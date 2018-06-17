@@ -52,4 +52,9 @@ public class AccomodationCategoryServiceImpl implements AccomodationCategoryServ
 	public AccomodationCategory getById(Long id) {
 		return repository.findOne(id);
 	}
+
+	@Override
+	public List<AccomodationCategory> getAll() {
+		return repository.findAll();
+	}
 }

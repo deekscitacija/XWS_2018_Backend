@@ -1,5 +1,7 @@
 package com.ftn.WebXML2018.XWS_2018_Backend.serviceImpl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -47,6 +49,11 @@ public class BonusFeaturesServiceImpl implements BonusFeaturesService{
 	@Override
 	public BonusFeatures getById(Long id) {
 		return repository.findOne(id);
+	}
+
+	@Override
+	public List<BonusFeatures> getAll() {
+		return repository.findAll();
 	}
 
 }

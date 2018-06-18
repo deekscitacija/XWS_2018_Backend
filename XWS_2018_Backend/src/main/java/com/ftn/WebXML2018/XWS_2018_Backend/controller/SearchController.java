@@ -22,11 +22,13 @@ import com.ftn.WebXML2018.XWS_2018_Backend.dto.CityCountryDTO;
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.BookingUnit;
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.City;
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.Country;
+import com.ftn.WebXML2018.XWS_2018_Backend.entity.MonthlyPrices;
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.Reservation;
 import com.ftn.WebXML2018.XWS_2018_Backend.responseWrapper.ResponseWrapper;
 import com.ftn.WebXML2018.XWS_2018_Backend.service.BookingUnitService;
 import com.ftn.WebXML2018.XWS_2018_Backend.service.CityService;
 import com.ftn.WebXML2018.XWS_2018_Backend.service.CountryService;
+import com.ftn.WebXML2018.XWS_2018_Backend.service.ReservationService;
 
 @RestController
 @RequestMapping(value = "/rest/")
@@ -34,6 +36,9 @@ public class SearchController {
 
 	@Autowired
 	private BookingUnitService bookingUnitService;
+	
+	@Autowired
+	private ReservationService reservationService;
 	
 	@Autowired
 	private CountryService countryService;
@@ -45,22 +50,22 @@ public class SearchController {
 	public ResponseWrapper<ArrayList<BookingUnitDTO>> getBookingUnits(@PathVariable int page, @RequestParam(value = "peopleNumber", required = true) int peopleNumber,
 															  @RequestParam(value="dateFrom", required = true) String dateFrom, 
 															  @RequestParam(value="dateTo", required = true) String dateTo,
-															  @RequestParam(value="country", required = false) Long country,
-															  @RequestParam(value="city", required = false) Long city){
+															  @RequestParam(value="country", required = false) Long countryId,
+															  @RequestParam(value="city", required = false) Long cityId){
 		
 		
-		if(country==null && city==null) {
+		if(countryId==null && cityId==null) {
 			return new ResponseWrapper<ArrayList<BookingUnitDTO>>(null,"Morate uneti ili grad ili drzavu za pretragu.",false);
 		}
 		
-		if(country!=null && city!=null) {
+		if(countryId!=null && cityId!=null) {
 			return new ResponseWrapper<ArrayList<BookingUnitDTO>>(null,"Ne smete uneti grad i drzavu za pretragu.",false);
 		}
 			
-		Country countryObj = null;
-		City cityObj = null;
+		Country country = null;
+		City city = null;
 		
-		Page<BookingUnit> bookingUnits = null;
+		Page<MonthlyPrices> monthlyPrices = null;
 		
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		Date dateFromDate = null;;
@@ -76,25 +81,25 @@ public class SearchController {
 			e.printStackTrace();
 		}
 		
-		if(country!=null) {
-			countryObj = countryService.getOne(country);
-			if(countryObj==null) {
+		if(countryId!=null) {
+			country = countryService.getOne(countryId);
+			if(country==null) {
 				return new ResponseWrapper<ArrayList<BookingUnitDTO>>(null,"Drzava koju ste uneli ne postoji.",false);
 			}
-			bookingUnits = bookingUnitService.findBookingUnitsByCountry(countryObj, peopleNumber, new PageRequest(page-1,10));
-		}else if(city!=null) {
-			cityObj = cityService.getOne(city);
-			if(cityObj==null) {
+			monthlyPrices = bookingUnitService.findBookingUnitsByCountry(country, peopleNumber, new PageRequest(page-1,10));
+		}else if(cityId!=null) {
+			city = cityService.getOne(cityId);
+			if(city==null) {
 				return new ResponseWrapper<ArrayList<BookingUnitDTO>>(null,"Grad koji ste uneli ne postoji.",false);
 			}
-			bookingUnits = bookingUnitService.findBookingUnitsByCity(cityObj, peopleNumber, new PageRequest(page-1,10));
+			monthlyPrices = bookingUnitService.findBookingUnitsByCity(city, peopleNumber, new PageRequest(page-1,10));
 		}
 		
 		ArrayList<BookingUnitDTO> retVal = new ArrayList<BookingUnitDTO>();
 		
-		for(BookingUnit bookingUnit : bookingUnits.getContent()) {
+		for(MonthlyPrices monthlyPrice : monthlyPrices.getContent()) {
 			boolean reserved = false;		
-			for(Reservation reservation : bookingUnit.getReservations()) {
+			/*for(Reservation reservation : bookingUnit.getReservations()) {
 				boolean expression1 = dateFromDate.getTime()>=reservation.getFromDate().getTime() && dateToDate.getTime()<=reservation.getToDate().getTime();
 				boolean expression2 = dateFromDate.getTime()<=reservation.getFromDate().getTime() && dateToDate.getTime()>=reservation.getFromDate().getTime();
 				boolean expression3 = dateFromDate.getTime()<=reservation.getToDate().getTime() && dateToDate.getTime() >= reservation.getToDate().getTime();
@@ -103,9 +108,10 @@ public class SearchController {
 					break;
 				}		
 			}
-			retVal.add(new BookingUnitDTO(bookingUnit,reserved));		
+			*/
+			retVal.add(new BookingUnitDTO(monthlyPrice.getBookingUnit(),reserved,monthlyPrice.getAmount(),null));		
 		}
-	
+		
 		return new ResponseWrapper<ArrayList<BookingUnitDTO>>(retVal,"Uspesno vracene smestajne jedinice.",true);
 	}
 	

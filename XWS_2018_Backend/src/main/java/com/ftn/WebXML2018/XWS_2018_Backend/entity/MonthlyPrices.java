@@ -6,10 +6,13 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 
 @Entity
+@Table(uniqueConstraints= @UniqueConstraint(columnNames = {"booking_unit_id","month", "year"}))
 public class MonthlyPrices {
 	
 	@Id

@@ -3,6 +3,8 @@ package com.ftn.WebXML2018.XWS_2018_Backend.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -14,7 +16,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
 import com.ftn.WebXML2018.XWS_2018_Backend.security.AuthenticationTokenFilter;
 
 @Configuration
@@ -57,18 +58,20 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     {
    
     	httpSecurity
-    		.csrf()
-    		.disable()
-    		.sessionManagement()
-    		.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-    		.and()
+			.csrf()
+			.disable()
+			.cors().and()
+			.sessionManagement()
+			.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+			.and()
+			.authorizeRequests()
+	        .antMatchers(HttpMethod.OPTIONS, "/*").permitAll().and()
     		.authorizeRequests()
     		.antMatchers("**/secured/**").authenticated();
         
 		httpSecurity.addFilterBefore(authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter.class);
 
 	}
-
 }
 
 

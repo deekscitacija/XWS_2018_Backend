@@ -48,4 +48,9 @@ public class AdvancedSearchWrapper {
 		this.bonusFeatures = bonusFeatures;
 	}
 
+	@Override
+	public String toString() {
+		return "AdvancedSearchWrapper [accomodationTypes=" + accomodationTypes + ", accomodationCategories="
+				+ accomodationCategories + ", bonusFeatures=" + bonusFeatures + "]";
+	}
 }

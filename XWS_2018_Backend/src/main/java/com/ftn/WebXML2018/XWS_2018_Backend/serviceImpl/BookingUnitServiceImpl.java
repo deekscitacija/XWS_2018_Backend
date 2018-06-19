@@ -2,9 +2,12 @@ package com.ftn.WebXML2018.XWS_2018_Backend.serviceImpl;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -48,7 +51,7 @@ public class BookingUnitServiceImpl implements BookingUnitService {
 	private ReservationRepository reservationRepository;
 	
 	@Override
-	public Page<BookingUnitDTO> findBookingUnits(City city, Country country, int peopleNumber, Date startDate, Date endDate, String mode, Pageable pageable) {
+	public Page<BookingUnitDTO> findBookingUnits(City city, Country country, int peopleNumber, Date startDate, Date endDate, List<AccomodationType> accomodationTypes, List<AccomodationCategory> accomodationCategories, List<BonusFeatures> bonusFeatures, Pageable pageable) {
 		
 		Calendar calendar = Calendar.getInstance();
 		int month = calendar.get(Calendar.MONTH)+1;
@@ -91,45 +94,41 @@ public class BookingUnitServiceImpl implements BookingUnitService {
 		List<Predicate> advanced = new ArrayList<Predicate>();
 		
 		advanced.add(withDestination);
-		
-		List<AccomodationType> accomodationTypes = new ArrayList<AccomodationType>();
-		AccomodationType at1 = new AccomodationType(new Long(1),"Hotel");
-		AccomodationType at2 = new AccomodationType(new Long(2), "Bed & Breakfast");
-		accomodationTypes.add(at1);
-		accomodationTypes.add(at2);
-		
-		List<AccomodationCategory> accomodationCategories = new ArrayList<AccomodationCategory>();
-		AccomodationCategory ac1 = new AccomodationCategory(new Long(5),"5 zvezdica");
-		accomodationCategories.add(ac1);
-		
-		List<BonusFeatures> bonusFeatures = new ArrayList<BonusFeatures>();
-		BonusFeatures bf1 = new BonusFeatures(new Long(1),"Parking");
-		bonusFeatures.add(bf1);
 				
 		if(accomodationTypes!=null) {
-			Expression<AccomodationType> accomodationTypeExpression = bookingUnitJoin.get("accomodationType");
-			Predicate accomodationTypePredicate = accomodationTypeExpression.in(accomodationTypes);
-			
-			advanced.add(accomodationTypePredicate);
+			if(!accomodationTypes.isEmpty()) {
+				Expression<AccomodationType> accomodationTypeExpression = bookingUnitJoin.get("accomodationType");
+				Predicate accomodationTypePredicate = accomodationTypeExpression.in(accomodationTypes);
+				
+				advanced.add(accomodationTypePredicate);
+			}	
 		}
 		
 		if(accomodationCategories!=null) {
-			Expression<AccomodationCategory> accomodationCategoryExpression = bookingUnitJoin.get("accomodationCategory");
-			Predicate accomodationCategoryPredicate = accomodationCategoryExpression.in(accomodationCategories);
-			
-			advanced.add(accomodationCategoryPredicate);
+			if(!accomodationCategories.isEmpty()) {
+				Expression<AccomodationCategory> accomodationCategoryExpression = bookingUnitJoin.get("accomodationCategory");
+				Predicate accomodationCategoryPredicate = accomodationCategoryExpression.in(accomodationCategories);
+				
+				advanced.add(accomodationCategoryPredicate);
+			}		
 		}
 		
 		if(bonusFeatures!=null) {
-			Expression<BonusFeatures> bonusFeaturesExpression = bookingUnitJoin.get("bonusFeatures");
-			Predicate bonusFeaturesPredicate = bonusFeaturesExpression.in(bonusFeatures);
-			
-			advanced.add(bonusFeaturesPredicate);
+			if(!bonusFeatures.isEmpty()) {
+				Expression<Collection<BonusFeatures>> bonusFeaturesExpression = bookingUnitJoin.get("bonusFeatures");
+				for(BonusFeatures bonusFeature : bonusFeatures) {
+					Predicate bonusFeaturesPredicate = builder.isMember(bonusFeature, bonusFeaturesExpression);
+					
+					advanced.add(bonusFeaturesPredicate);
+				}	
+			}
 		}
 			
 		query.where(builder.and(advanced.toArray(new Predicate[advanced.size()])));
-				
-		List<MonthlyPrices> monthlyPrices = em.createQuery(query.select(root))
+		query.select(root);
+		query.orderBy(builder.asc(bookingUnitJoin.get("name")));
+		
+		List<MonthlyPrices> monthlyPrices = em.createQuery(query)
 				.setMaxResults(pageable.getPageSize())
 				.setFirstResult(pageable.getPageNumber()*pageable.getPageSize())
 				.getResultList();
@@ -143,31 +142,6 @@ public class BookingUnitServiceImpl implements BookingUnitService {
 		}
 		
 		Long count = em.createQuery(countQuery).getSingleResult();
-		
-		
-		/*Page<MonthlyPrices> monthlyPrices = null;
-		
-		if(mode==null) {
-			
-
-			List<AccomodationType> types = new ArrayList<AccomodationType>();
-			AccomodationType at1 = new AccomodationType(new Long(1),"Hotel");
-			AccomodationType at2 = new AccomodationType(new Long(3), "Apartman");
-			types.add(at1);
-			types.add(at2);
-			
-			
-			
-			monthlyPrices = bookingUnitRepository.findBookingUnitsByCity(city, peopleNumber, month, year, pageable);
-		}else if(mode.equalsIgnoreCase(SortModes.PriceDesc.toString())){
-			monthlyPrices = bookingUnitRepository.findBookingUnitsByCityOrderByPriceDescending(city, peopleNumber, month, year, pageable);
-		}else if(mode.equalsIgnoreCase(SortModes.PriceAsc.toString())) {
-			monthlyPrices = bookingUnitRepository.findBookingUnitsByCityOrderByPriceAscending(city, peopleNumber, month, year, pageable);
-		}else {
-			return null;
-		}
-		System.out.println(monthlyPrices);
-		*/
 		
 		return new PageImpl<>(convertToBookingUnitDTO(monthlyPrices,startDate,endDate),pageable,count);
 	}

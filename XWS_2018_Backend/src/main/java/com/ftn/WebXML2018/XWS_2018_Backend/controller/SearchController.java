@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ftn.WebXML2018.XWS_2018_Backend.dto.AdvancedSearchWrapper;
 import com.ftn.WebXML2018.XWS_2018_Backend.dto.BookingUnitDTO;
 import com.ftn.WebXML2018.XWS_2018_Backend.dto.CityCountryDTO;
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.BookingUnit;
@@ -48,14 +49,13 @@ public class SearchController {
 	@Autowired
 	private CityService cityService;
 	
-	@RequestMapping(value="getBookingUnits/{page}", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value="getBookingUnits/{page}", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
 	public ResponseWrapper<Page<BookingUnitDTO>> getBookingUnits(@PathVariable int page, @RequestParam(value = "peopleNumber", required = true) int peopleNumber,
 															  @RequestParam(value="dateFrom", required = true) String dateFrom, 
 															  @RequestParam(value="dateTo", required = true) String dateTo,
 															  @RequestParam(value="country", required = false) Long countryId,
 															  @RequestParam(value="city", required = false) Long cityId,
-															  @RequestParam(value="mode", required = false) String mode){
-		
+															  @RequestBody AdvancedSearchWrapper advancedSearchWrapper){
 		
 		if(countryId==null && cityId==null) {
 			return new ResponseWrapper<Page<BookingUnitDTO>>(null,"Morate uneti ili grad ili drzavu za pretragu.",false);
@@ -94,7 +94,7 @@ public class SearchController {
 			}
 		}	
 		
-		Page<BookingUnitDTO> bookingUnits = bookingUnitService.findBookingUnits(city, country, peopleNumber, dateFromDate, dateToDate, mode, new PageRequest(page-1,10));
+		Page<BookingUnitDTO> bookingUnits = bookingUnitService.findBookingUnits(city, country, peopleNumber, dateFromDate, dateToDate, advancedSearchWrapper.getAccomodationTypes(), advancedSearchWrapper.getAccomodationCategories(), advancedSearchWrapper.getBonusFeatures(),  new PageRequest(page-1,10));
 		
 		if(bookingUnits == null) {
 			return new ResponseWrapper<Page<BookingUnitDTO>>(null,"Neuspesno vracene smestajne jedinice.",false);

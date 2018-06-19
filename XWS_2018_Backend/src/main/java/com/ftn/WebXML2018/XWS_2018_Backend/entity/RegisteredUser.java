@@ -12,10 +12,6 @@ public class RegisteredUser {
 	private Long id;
 	
 	@Column(nullable = true)
-	@Size(max = 90)
-	private String email;
-	
-	@Column(nullable = true)
 	@Size(max = 30)
 	private String phoneNumber;
 	
@@ -29,17 +25,8 @@ public class RegisteredUser {
 	public RegisteredUser(Long id, String email, String phoneNumber, boolean active) {
 		super();
 		this.id = id;
-		this.email = email;
 		this.phoneNumber = phoneNumber;
 		this.active = active;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
 	}
 
 	public String getPhoneNumber() {

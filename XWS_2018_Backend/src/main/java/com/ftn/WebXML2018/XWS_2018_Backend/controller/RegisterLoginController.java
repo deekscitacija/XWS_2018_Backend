@@ -69,14 +69,15 @@ public class RegisterLoginController {
 			@RequestParam(value="drzava", required = true) String drzava,
 			@RequestParam(value="adresa", required = true) String adresa,
 			@RequestParam(value="email", required = true) String email,
-			@RequestParam(value="telefon", required = true) String telefon,
+			@RequestParam(value="telefon", required = false) String telefon,
 			@RequestParam(value="postbroj", required = true) String postbroj,
+			@RequestParam(value="tip", required = true) UserRolesType tip,
 			HttpServletResponse response
 			) {
 		
-		System.out.println(username+" "+password+" "+ime+" "+prezime+" "+grad+" "+drzava+" "+adresa+" "+email+" "+telefon+" "+postbroj);
+		System.out.println(tip+" "+username+" "+password+" "+ime+" "+prezime+" "+grad+" "+drzava+" "+adresa+" "+email+" "+telefon+" "+postbroj);
 		
-		User newUser = userService.register(username.trim(), password, ime.trim(), prezime.trim(), grad.trim(), drzava, 
+		User newUser = userService.register(tip, username.trim(), password, ime.trim(), prezime.trim(), grad.trim(), drzava, 
 				adresa.trim().isEmpty() ? null : adresa.trim(), email.trim(), telefon.trim().isEmpty() ? null : telefon.trim(), postbroj.trim().isEmpty() ? null : postbroj.trim());
 		
 		if(newUser == null) {

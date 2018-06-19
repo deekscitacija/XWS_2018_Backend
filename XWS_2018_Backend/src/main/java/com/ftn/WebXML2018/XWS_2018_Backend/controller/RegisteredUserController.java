@@ -40,7 +40,7 @@ public class RegisteredUserController {
 		}
 		
 		currentUser = userService.changeUserInfo(currentUser, user.getName(), user.getSurname(), user.getCity().getName(), user.getCity().getCountry().getId().toString(), 
-				user.getHomeAddress(), user.getRegisteredUser().getEmail(), user.getRegisteredUser().getPhoneNumber(), user.getCity().getPostcode());
+				user.getHomeAddress(), user.getEmail(), user.getRegisteredUser().getPhoneNumber(), user.getCity().getPostcode());
 		
 		if(currentUser == null) {
 			return new ResponseWrapper<>(null, "Neuspesno izmenjeni podaci.", false);

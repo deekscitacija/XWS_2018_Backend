@@ -8,12 +8,11 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.ftn.WebXML2018.XWS_2018_Backend.dto.UserDTO;
+import com.ftn.WebXML2018.XWS_2018_Backend.entity.AgentUser;
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.City;
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.Country;
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.RegisteredUser;
@@ -74,7 +73,7 @@ public class UserServiceImpl implements UserService{
 	}
 
 	@Override
-	public User register(String username, String password, String ime, String prezime, String grad, String drzava,
+	public User register(UserRolesType tip, String username, String password, String ime, String prezime, String grad, String drzava,
 			String adresa, String email, String telefon, String postbroj) {
 		
 		if(username.isEmpty() || password.isEmpty() || ime.isEmpty() || prezime.isEmpty() || grad.isEmpty() || drzava.isEmpty()) {
@@ -105,18 +104,20 @@ public class UserServiceImpl implements UserService{
 			city = cityRepository.save(city);
 		}
 		
-		UserRoles role = userRolesRepository.getByName(UserRolesType.REG_USER);
+		UserRoles role = userRolesRepository.getByName(tip);
 		
 		if(role == null) {
 			return null;
 		}
 		
-		User newUser = new User(null, username, passwordEncoder.encode(password), ime, prezime, role, city, null, null, adresa); 
+		User newUser = new User(null, username, passwordEncoder.encode(password), ime, prezime, role, city, null, null, adresa, email); 
 		
 		try {
 			newUser = userRepository.save(newUser);
-			RegisteredUser regUser = new RegisteredUser(newUser.getId(), email, telefon, false);	//Admin aktivira korisnike!
-			regUser = registeredUserRepository.save(regUser);
+			if(tip == UserRolesType.REG_USER) {
+				RegisteredUser regUser = new RegisteredUser(newUser.getId(), email, telefon, false);	//Admin aktivira korisnike!
+				regUser = registeredUserRepository.save(regUser);
+			}
 		}catch(Exception e) {
 			return null;
 		}
@@ -184,8 +185,8 @@ public class UserServiceImpl implements UserService{
 			user.setHomeAddress(adresa.isEmpty() ? null : adresa);
 		}
 		
-		if(!email.equals(user.getRegisteredUser().getEmail()) && !email.isEmpty()) {
-			user.getRegisteredUser().setEmail(email);
+		if(!email.equals(user.getEmail()) && !email.isEmpty()) {
+			user.setEmail(email);
 		}
 		
 		if(!telefon.equals(user.getRegisteredUser().getPhoneNumber())) {

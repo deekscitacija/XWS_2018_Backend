@@ -34,6 +34,10 @@ public class User {
 	@Size(max = 60)
 	private String surname;
 	
+	@Column(nullable = false)
+	@Size(max = 90)
+	private String email;
+	
 	@ManyToOne(optional = false)
 	private UserRoles userRole;
 	
@@ -57,7 +61,7 @@ public class User {
 	}
 
 	public User(Long id, String username, String password, String name, String surname, UserRoles userRole, 
-			City city, RegisteredUser registeredUser, AgentUser agentUser, String homeAddress) {
+			City city, RegisteredUser registeredUser, AgentUser agentUser, String homeAddress, String email) {
 		super();
 		this.id = id;
 		this.username = username;
@@ -69,9 +73,10 @@ public class User {
 		this.registeredUser = registeredUser;
 		this.agentUser = agentUser;
 		this.homeAddress = homeAddress;
+		this.email = email;
 	}
 	
-	public User(String username, String password, String name, String surname, UserRoles userRole, City city, String homeAddress) {
+	public User(String username, String password, String name, String surname, UserRoles userRole, City city, String homeAddress, String email) {
 		super();
 		this.username = username;
 		this.password = password;
@@ -80,6 +85,7 @@ public class User {
 		this.userRole = userRole;
 		this.city = city;
 		this.homeAddress = homeAddress;
+		this.email = email;
 	}
 
 	public Long getId() {
@@ -160,6 +166,14 @@ public class User {
 
 	public void setRegisteredUser(RegisteredUser registeredUser) {
 		this.registeredUser = registeredUser;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
 	}
 
 }

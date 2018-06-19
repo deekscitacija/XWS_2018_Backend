@@ -12,10 +12,6 @@ public class AgentUser {
 	private Long id;
 	
 	@Column(nullable = false)
-	@Size(max = 90)
-	private String email;
-	
-	@Column(nullable = false)
 	@Size(min = 13, max = 13)
 	private String pmb;
 	
@@ -23,25 +19,15 @@ public class AgentUser {
 		
 	}
 	
-	public AgentUser(Long id, User user, String email, String pmb) {
+	public AgentUser(Long id, String email, String pmb) {
 		super();
 		this.id = id;
-		this.email = email;
 		this.pmb = pmb;
 	}
 
-	public AgentUser(User user, String email, String pmb) {
+	public AgentUser(String email, String pmb) {
 		super();
-		this.email = email;
 		this.pmb = pmb;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
 	}
 
 	public String getPmb() {

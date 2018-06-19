@@ -56,7 +56,7 @@ public class ReservationController {
 		User user = userService.getUserFromToken(request, tokenUtils);
 		
 		if(user == null) {
-			response.setStatus(HttpStatus.BAD_REQUEST.value());
+			response.setStatus(HttpStatus.UNAUTHORIZED.value());
 			return null;
 		}
 		

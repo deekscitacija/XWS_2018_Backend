@@ -32,7 +32,7 @@ public class EmailServiceImpl implements EmailService{
 		MimeMessage message = mailSender.createMimeMessage();
 		MimeMessageHelper helper = new MimeMessageHelper(message, false);
 		helper.setFrom(environment.getProperty("spring.mail.username"));
-		helper.setTo(user.getRegisteredUser().getEmail());
+		helper.setTo(user.getEmail());
 		helper.setSubject("XWS_Booking Izmena Lozinke");
 		
 		String poruka = "";

@@ -22,4 +22,6 @@ public interface ReservationService {
 	public List<Reservation> findCriticalReservations(BookingUnit bookingUnit, Date startDate, Date endDate);
 	
 	public Reservation findById(Long id);
+	
+	public void deleteReservation(Long id);
 }

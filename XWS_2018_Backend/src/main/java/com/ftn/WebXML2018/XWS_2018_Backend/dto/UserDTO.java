@@ -14,13 +14,14 @@ public class UserDTO {
 	private String homeAddress;
 	private RegisteredUser registeredUser;
 	private City city;
+	private String email;
 	
 	public UserDTO() {
 		
 	}
 
 	public UserDTO(Long id, String username, String password, UserRoles userRole, String name, String surname, String homeAddress, 
-			RegisteredUser registeredUser, City city) {
+			RegisteredUser registeredUser, City city, String email) {
 		super();
 		this.id = id;
 		this.username = username;
@@ -30,6 +31,7 @@ public class UserDTO {
 		this.homeAddress = homeAddress;
 		this.registeredUser = registeredUser;
 		this.city = city;
+		this.email = email;
 	}
 
 	public Long getId() {
@@ -95,4 +97,13 @@ public class UserDTO {
 	public void setCity(City city) {
 		this.city = city;
 	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+	
 }

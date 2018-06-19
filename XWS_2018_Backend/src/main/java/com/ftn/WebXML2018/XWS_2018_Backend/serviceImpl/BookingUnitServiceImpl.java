@@ -103,7 +103,9 @@ public class BookingUnitServiceImpl implements BookingUnitService {
 		accomodationCategories.add(ac1);
 		
 		List<BonusFeatures> bonusFeatures = new ArrayList<BonusFeatures>();
-		
+		BonusFeatures bf1 = new BonusFeatures(new Long(1),"Parking");
+		bonusFeatures.add(bf1);
+				
 		if(accomodationTypes!=null) {
 			Expression<AccomodationType> accomodationTypeExpression = bookingUnitJoin.get("accomodationType");
 			Predicate accomodationTypePredicate = accomodationTypeExpression.in(accomodationTypes);

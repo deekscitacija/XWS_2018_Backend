@@ -1,6 +1,7 @@
 package com.ftn.WebXML2018.XWS_2018_Backend.securityService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -11,6 +12,7 @@ import com.ftn.WebXML2018.XWS_2018_Backend.repository.UserRepository;
 import com.ftn.WebXML2018.XWS_2018_Backend.securityBeans.CustomUserDetailsFactory;
 
 @Service
+@ComponentScan("repository")
 public class CustomUserDetailsService implements UserDetailsService{
 
 	@Autowired

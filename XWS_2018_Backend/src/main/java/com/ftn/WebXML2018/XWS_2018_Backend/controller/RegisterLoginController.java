@@ -12,8 +12,10 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,8 +24,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ftn.WebXML2018.XWS_2018_Backend.dto.UserDTO;
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.PasswordResetToken;
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.User;
+import com.ftn.WebXML2018.XWS_2018_Backend.entity.UserRoles;
+import com.ftn.WebXML2018.XWS_2018_Backend.enums.UserRolesType;
 import com.ftn.WebXML2018.XWS_2018_Backend.helpClasses.RandomStringGenerator;
 import com.ftn.WebXML2018.XWS_2018_Backend.responseWrapper.ResponseWrapper;
+import com.ftn.WebXML2018.XWS_2018_Backend.security.AuthenticationRequest;
+import com.ftn.WebXML2018.XWS_2018_Backend.security.AuthenticationResponse;
 import com.ftn.WebXML2018.XWS_2018_Backend.security.TokenUtils;
 import com.ftn.WebXML2018.XWS_2018_Backend.securityBeans.CustomUserDetailsFactory;
 import com.ftn.WebXML2018.XWS_2018_Backend.service.EmailService;
@@ -197,5 +203,30 @@ public class RegisterLoginController {
 		return new ResponseWrapper<>(null, "Uspesna izmena lozinke, mozete se prijaviti sa svojom novom lozinkom.", true);
 	}
 	
-
+	@RequestMapping(value = "adminLogin", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<?> adminLogin(@RequestBody AuthenticationRequest request){
+		User user = userService.getByUsername(request.getUsername());
+		
+		if(user == null) {
+			ResponseWrapper ret = new ResponseWrapper<>(null, "Username not found.", false);
+			return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(ret);
+		} else {
+			UserRoles role = user.getUserRole();
+			if(!role.getName().equals(UserRolesType.ADMIN)) {
+				ResponseWrapper ret =  new ResponseWrapper<>(null, "User is not Admin.", false);
+				return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(ret);
+			}
+		}
+		
+		if(!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+			ResponseWrapper ret = new ResponseWrapper<>(null, "Bad password. Try again.", false);
+			return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(ret);
+		}
+		
+		String token = tokenUtils.generateToken(CustomUserDetailsFactory.createCustomUserDetails(user));
+		AuthenticationResponse response = new AuthenticationResponse(request.getUsername(), token);
+		
+		ResponseWrapper ret = new ResponseWrapper<AuthenticationResponse>(response, "Success!", true);
+		return ResponseEntity.ok(ret);
+	}
 }

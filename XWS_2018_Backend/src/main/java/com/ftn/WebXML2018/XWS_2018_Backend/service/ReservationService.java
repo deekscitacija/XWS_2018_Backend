@@ -20,4 +20,8 @@ public interface ReservationService {
 	public Reservation saveReservation(Reservation reservation) throws ReservationAlredyExsistsException;
 	
 	public List<Reservation> findCriticalReservations(BookingUnit bookingUnit, Date startDate, Date endDate);
+	
+	public Reservation findById(Long id);
+	
+	public void deleteReservation(Long id);
 }

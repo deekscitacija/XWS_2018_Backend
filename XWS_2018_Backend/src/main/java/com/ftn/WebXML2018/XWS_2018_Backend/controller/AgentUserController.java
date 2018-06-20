@@ -15,6 +15,7 @@ import com.ftn.WebXML2018.XWS_2018_Backend.dto.AgentRegistrationDTO;
 import com.ftn.WebXML2018.XWS_2018_Backend.dto.UserDTO;
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.AgentUser;
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.User;
+import com.ftn.WebXML2018.XWS_2018_Backend.enums.UserRolesType;
 import com.ftn.WebXML2018.XWS_2018_Backend.responseWrapper.ResponseWrapper;
 import com.ftn.WebXML2018.XWS_2018_Backend.service.AgentUserService;
 import com.ftn.WebXML2018.XWS_2018_Backend.service.UserService;
@@ -39,13 +40,12 @@ public class AgentUserController {
 		ResponseWrapper<AgentUser> resp = null;
 		ResponseEntity<ResponseWrapper<AgentUser>> ret = null;
 		
-		User regUser = userService.register(agent.getUsername(), agent.getPassword(), agent.getName(), agent.getSurname(),
+		User regUser = userService.register(UserRolesType.AGENT, agent.getUsername(), agent.getPassword(), agent.getName(), agent.getSurname(),
 										agent.getCity(), agent.getState(), agent.getHomeAddress(), agent.getEmail(), 
 										agent.getPhoneNumber(), agent.getPostCode());
 		if(regUser != null) {
 			try {
 				agentUser = new AgentUser();
-				agentUser.setEmail(agent.getEmail());
 				agentUser.setId(regUser.getId());
 				agentUser.setPmb(agent.getPmb());
 				retFromService = agentService.save(agentUser);

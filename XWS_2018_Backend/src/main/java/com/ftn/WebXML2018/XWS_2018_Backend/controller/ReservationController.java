@@ -56,7 +56,7 @@ public class ReservationController {
 		User user = userService.getUserFromToken(request, tokenUtils);
 		
 		if(user == null) {
-			response.setStatus(HttpStatus.BAD_REQUEST.value());
+			response.setStatus(HttpStatus.UNAUTHORIZED.value());
 			return null;
 		}
 		
@@ -127,6 +127,23 @@ public class ReservationController {
 		}
 				
 		return new ResponseWrapper<Reservation>(retVal, true);
+	}
+	
+	@PreAuthorize("hasAuthority('REG_USER')")
+	@RequestMapping(value = "cancelReservation/{reservationId}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseWrapper<Boolean> cancelReservation(@PathVariable Long reservationId, HttpServletRequest request, HttpServletResponse response){
+		
+		Reservation forDelete = reservationService.findById(reservationId);
+		User user = userService.getUserFromToken(request, tokenUtils);
+		
+		if(user == null || forDelete == null || !forDelete.getRegisteredUser().getId().equals(user.getId())) {
+			response.setStatus(HttpStatus.BAD_REQUEST.value());
+			return null;
+		}
+		
+		reservationService.deleteReservation(reservationId);
+		
+		return new ResponseWrapper<Boolean>(true, true);
 	}
 
 }

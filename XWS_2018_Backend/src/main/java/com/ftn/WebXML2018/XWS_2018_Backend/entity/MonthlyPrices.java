@@ -94,6 +94,11 @@ public class MonthlyPrices {
 
 	public void setBookingUnit(BookingUnit bookingUnit) {
 		this.bookingUnit = bookingUnit;
-	}	
+	}
 
+	@Override
+	public String toString() {
+		return "MonthlyPrices [id=" + id + ", amount=" + amount + ", month=" + month + ", year=" + year
+				+ ", bookingUnit=" + bookingUnit + "]";
+	}	
 }

@@ -4,6 +4,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ftn.WebXML2018.XWS_2018_Backend.dto.AdvancedSearchWrapper;
 import com.ftn.WebXML2018.XWS_2018_Backend.dto.BookingUnitDTO;
 import com.ftn.WebXML2018.XWS_2018_Backend.dto.CityCountryDTO;
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.BookingUnit;
@@ -24,6 +26,7 @@ import com.ftn.WebXML2018.XWS_2018_Backend.entity.City;
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.Country;
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.MonthlyPrices;
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.Reservation;
+import com.ftn.WebXML2018.XWS_2018_Backend.enums.SortModes;
 import com.ftn.WebXML2018.XWS_2018_Backend.responseWrapper.ResponseWrapper;
 import com.ftn.WebXML2018.XWS_2018_Backend.service.BookingUnitService;
 import com.ftn.WebXML2018.XWS_2018_Backend.service.CityService;
@@ -46,26 +49,24 @@ public class SearchController {
 	@Autowired
 	private CityService cityService;
 	
-	@RequestMapping(value="getBookingUnits/{page}", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
-	public ResponseWrapper<ArrayList<BookingUnitDTO>> getBookingUnits(@PathVariable int page, @RequestParam(value = "peopleNumber", required = true) int peopleNumber,
+	@RequestMapping(value="getBookingUnits/{page}", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
+	public ResponseWrapper<Page<BookingUnitDTO>> getBookingUnits(@PathVariable int page, @RequestParam(value = "peopleNumber", required = true) int peopleNumber,
 															  @RequestParam(value="dateFrom", required = true) String dateFrom, 
 															  @RequestParam(value="dateTo", required = true) String dateTo,
 															  @RequestParam(value="country", required = false) Long countryId,
-															  @RequestParam(value="city", required = false) Long cityId){
-		
+															  @RequestParam(value="city", required = false) Long cityId,
+															  @RequestBody AdvancedSearchWrapper advancedSearchWrapper){
 		
 		if(countryId==null && cityId==null) {
-			return new ResponseWrapper<ArrayList<BookingUnitDTO>>(null,"Morate uneti ili grad ili drzavu za pretragu.",false);
+			return new ResponseWrapper<Page<BookingUnitDTO>>(null,"Morate uneti ili grad ili drzavu za pretragu.",false);
 		}
 		
 		if(countryId!=null && cityId!=null) {
-			return new ResponseWrapper<ArrayList<BookingUnitDTO>>(null,"Ne smete uneti grad i drzavu za pretragu.",false);
+			return new ResponseWrapper<Page<BookingUnitDTO>>(null,"Ne smete uneti grad i drzavu za pretragu.",false);
 		}
 			
 		Country country = null;
 		City city = null;
-		
-		Page<MonthlyPrices> monthlyPrices = null;
 		
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		Date dateFromDate = null;;
@@ -84,35 +85,22 @@ public class SearchController {
 		if(countryId!=null) {
 			country = countryService.getOne(countryId);
 			if(country==null) {
-				return new ResponseWrapper<ArrayList<BookingUnitDTO>>(null,"Drzava koju ste uneli ne postoji.",false);
+				return new ResponseWrapper<Page<BookingUnitDTO>>(null,"Drzava koju ste uneli ne postoji.",false);
 			}
-			monthlyPrices = bookingUnitService.findBookingUnitsByCountry(country, peopleNumber, new PageRequest(page-1,10));
 		}else if(cityId!=null) {
 			city = cityService.getOne(cityId);
 			if(city==null) {
-				return new ResponseWrapper<ArrayList<BookingUnitDTO>>(null,"Grad koji ste uneli ne postoji.",false);
+				return new ResponseWrapper<Page<BookingUnitDTO>>(null,"Grad koji ste uneli ne postoji.",false);
 			}
-			monthlyPrices = bookingUnitService.findBookingUnitsByCity(city, peopleNumber, new PageRequest(page-1,10));
+		}	
+		
+		Page<BookingUnitDTO> bookingUnits = bookingUnitService.findBookingUnits(city, country, peopleNumber, dateFromDate, dateToDate, advancedSearchWrapper.getAccomodationTypes(), advancedSearchWrapper.getAccomodationCategories(), advancedSearchWrapper.getBonusFeatures(),  new PageRequest(page-1,10));
+		
+		if(bookingUnits == null) {
+			return new ResponseWrapper<Page<BookingUnitDTO>>(null,"Neuspesno vracene smestajne jedinice.",false);
 		}
 		
-		ArrayList<BookingUnitDTO> retVal = new ArrayList<BookingUnitDTO>();
-		
-		for(MonthlyPrices monthlyPrice : monthlyPrices.getContent()) {
-			boolean reserved = false;		
-			/*for(Reservation reservation : bookingUnit.getReservations()) {
-				boolean expression1 = dateFromDate.getTime()>=reservation.getFromDate().getTime() && dateToDate.getTime()<=reservation.getToDate().getTime();
-				boolean expression2 = dateFromDate.getTime()<=reservation.getFromDate().getTime() && dateToDate.getTime()>=reservation.getFromDate().getTime();
-				boolean expression3 = dateFromDate.getTime()<=reservation.getToDate().getTime() && dateToDate.getTime() >= reservation.getToDate().getTime();
-				if(expression1 || expression2 || expression3) {
-					reserved = true;
-					break;
-				}		
-			}
-			*/
-			retVal.add(new BookingUnitDTO(monthlyPrice.getBookingUnit(),reserved,monthlyPrice.getAmount(),null));		
-		}
-		
-		return new ResponseWrapper<ArrayList<BookingUnitDTO>>(retVal,"Uspesno vracene smestajne jedinice.",true);
+		return new ResponseWrapper<Page<BookingUnitDTO>>(bookingUnits,"Uspesno vracene smestajne jedinice.",true);
 	}
 	
 	@RequestMapping(value="getCountriesAndCitiesSearch",method=RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -140,7 +128,7 @@ public class SearchController {
 			
 			stop--;		
 		}
-		System.out.println("sagggggggg");
+		
 		return new ResponseWrapper<ArrayList<CityCountryDTO>>(retVal,"Uspesno vracena lista gradova i drzava.", true);
 	}
 	

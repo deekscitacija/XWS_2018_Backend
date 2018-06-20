@@ -34,7 +34,7 @@ public class ReservationServiceImpl implements ReservationService{
 	public Page<Reservation> findByRegisteredUserAndConfirmed(RegisteredUser registeredUser, boolean confirmed,
 			Pageable pageable) {
 		
-		return reservationRepository.findByRegisteredUserAndConfirmed(registeredUser, confirmed, pageable);
+		return reservationRepository.findByRegisteredUserAndConfirmedOrderByFromDateDesc(registeredUser, confirmed, pageable);
 	}
 
 	@Override
@@ -56,6 +56,18 @@ public class ReservationServiceImpl implements ReservationService{
 	public List<Reservation> findCriticalReservations(BookingUnit bookingUnit, Date startDate, Date endDate) {
 		
 		return reservationRepository.findCriticalReservations(bookingUnit, startDate, endDate);
+	}
+
+	@Override
+	public Reservation findById(Long id) {
+		
+		return reservationRepository.findOne(id);
+	}
+
+	@Override
+	public void deleteReservation(Long id) {
+		
+		reservationRepository.delete(id);
 	}
 
 }

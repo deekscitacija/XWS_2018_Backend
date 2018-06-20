@@ -8,7 +8,5 @@ public interface AgentUserRepository extends JpaRepository<AgentUser, Long> {
 
 	public AgentUser getById(Long id);
 	
-	public AgentUser getByEmail(String email);
-	
 	public AgentUser getByPmb(String pmb);
 }

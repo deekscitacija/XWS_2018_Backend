@@ -163,7 +163,7 @@ public class BookingUnitServiceImpl implements BookingUnitService {
 			if(!reservations.isEmpty())
 				reserved = true;
 			
-			bookingUnits.add(new BookingUnitDTO(bookingUnit,reserved,monthlyPrice.getAmount(),null));
+			bookingUnits.add(new BookingUnitDTO(bookingUnit,reserved,monthlyPrice.getAmount(),new Double(0)));
 		}
 		
 		return bookingUnits;

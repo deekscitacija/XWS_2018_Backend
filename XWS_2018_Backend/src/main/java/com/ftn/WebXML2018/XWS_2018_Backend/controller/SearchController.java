@@ -49,8 +49,8 @@ public class SearchController {
 	@Autowired
 	private CityService cityService;
 	
-	@RequestMapping(value="getBookingUnits/{page}", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
-	public ResponseWrapper<Page<BookingUnitDTO>> getBookingUnits(@PathVariable int page, @RequestParam(value = "peopleNumber", required = true) int peopleNumber,
+	@RequestMapping(value="getBookingUnits/page={page}&num={num}", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
+	public ResponseWrapper<Page<BookingUnitDTO>> getBookingUnits(@PathVariable int page, @PathVariable int num, @RequestParam(value = "peopleNumber", required = true) int peopleNumber,
 															  @RequestParam(value="dateFrom", required = true) String dateFrom, 
 															  @RequestParam(value="dateTo", required = true) String dateTo,
 															  @RequestParam(value="country", required = false) Long countryId,
@@ -94,7 +94,7 @@ public class SearchController {
 			}
 		}	
 		
-		Page<BookingUnitDTO> bookingUnits = bookingUnitService.findBookingUnits(city, country, peopleNumber, dateFromDate, dateToDate, advancedSearchWrapper.getAccomodationTypes(), advancedSearchWrapper.getAccomodationCategories(), advancedSearchWrapper.getBonusFeatures(),  new PageRequest(page-1,10));
+		Page<BookingUnitDTO> bookingUnits = bookingUnitService.findBookingUnits(city, country, peopleNumber, dateFromDate, dateToDate, advancedSearchWrapper.getAccomodationTypes(), advancedSearchWrapper.getAccomodationCategories(), advancedSearchWrapper.getBonusFeatures(),  new PageRequest(page,num));
 		
 		if(bookingUnits == null) {
 			return new ResponseWrapper<Page<BookingUnitDTO>>(null,"Neuspesno vracene smestajne jedinice.",false);

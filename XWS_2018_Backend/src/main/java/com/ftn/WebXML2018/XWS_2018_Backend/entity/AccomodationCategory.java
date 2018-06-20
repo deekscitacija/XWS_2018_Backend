@@ -18,14 +18,18 @@ public class AccomodationCategory {
 	@Size(max = 60)
 	private String name;
 
+	@Column(nullable = false)
+	private Integer strength;
+	
 	public AccomodationCategory() {
 		
 	}
 
-	public AccomodationCategory(Long id, String name) {
+	public AccomodationCategory(Long id, String name, Integer strength) {
 		super();
 		this.id = id;
 		this.name = name;
+		this.strength = strength;
 	}
 	
 	public AccomodationCategory(String name) {
@@ -48,5 +52,12 @@ public class AccomodationCategory {
 	public void setName(String name) {
 		this.name = name;
 	}
-	
+
+	public Integer getStrength() {
+		return strength;
+	}
+
+	public void setStrength(Integer strength) {
+		this.strength = strength;
+	}
 }

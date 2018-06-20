@@ -56,7 +56,7 @@ public class SearchController {
 															  @RequestParam(value="country", required = false) Long countryId,
 															  @RequestParam(value="city", required = false) Long cityId,
 															  @RequestBody AdvancedSearchWrapper advancedSearchWrapper){
-		
+		System.out.println(num);
 		if(countryId==null && cityId==null) {
 			return new ResponseWrapper<Page<BookingUnitDTO>>(null,"Morate uneti ili grad ili drzavu za pretragu.",false);
 		}

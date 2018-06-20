@@ -5,6 +5,7 @@ import java.util.List;
 import javax.servlet.ServletRequest;
 
 import com.ftn.WebXML2018.XWS_2018_Backend.dto.UserDTO;
+import com.ftn.WebXML2018.XWS_2018_Backend.dto.UserMiniDTO;
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.User;
 import com.ftn.WebXML2018.XWS_2018_Backend.security.TokenUtils;
 
@@ -34,5 +35,7 @@ public interface UserService {
 	
 	public List<User> getDisabledUsers();
 	
-	public UserDTO convertToDTO(User u);
+	public List<User> getAllRegistered();
+	
+	public UserMiniDTO convertToDTO(User u);
 }

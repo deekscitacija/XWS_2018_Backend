@@ -101,7 +101,7 @@ public class AccomodationCategoryController {
 		}
 	}
 	
-	@GetMapping("/all")
+	@GetMapping("")
 	public ResponseEntity<?> findAll() {
 		List<AccomodationCategory> ret = null;
 		ResponseWrapper<List<AccomodationCategory>> resp = null;

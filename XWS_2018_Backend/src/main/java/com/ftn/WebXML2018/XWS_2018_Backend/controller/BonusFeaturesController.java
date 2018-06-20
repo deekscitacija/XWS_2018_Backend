@@ -99,7 +99,7 @@ public class BonusFeaturesController {
 		}
 	}
 	
-	@GetMapping("/all")
+	@GetMapping("")
 	public ResponseEntity<?> findAll() {
 		List<BonusFeatures> ret = null;
 		ResponseWrapper<List<BonusFeatures>> resp = null;

@@ -19,13 +19,13 @@ public class AgentUser {
 		
 	}
 	
-	public AgentUser(Long id, String email, String pmb) {
+	public AgentUser(Long id, String pmb) {
 		super();
 		this.id = id;
 		this.pmb = pmb;
 	}
 
-	public AgentUser(String email, String pmb) {
+	public AgentUser(String pmb) {
 		super();
 		this.pmb = pmb;
 	}

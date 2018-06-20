@@ -4,7 +4,6 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,21 +16,22 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.ftn.WebXML2018.XWS_2018_Backend.dto.AdvancedSearchWrapper;
 import com.ftn.WebXML2018.XWS_2018_Backend.dto.BookingUnitDTO;
 import com.ftn.WebXML2018.XWS_2018_Backend.dto.CityCountryDTO;
-import com.ftn.WebXML2018.XWS_2018_Backend.entity.BookingUnit;
+import com.ftn.WebXML2018.XWS_2018_Backend.entity.AccomodationCategory;
+import com.ftn.WebXML2018.XWS_2018_Backend.entity.AccomodationType;
+import com.ftn.WebXML2018.XWS_2018_Backend.entity.BonusFeatures;
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.City;
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.Country;
-import com.ftn.WebXML2018.XWS_2018_Backend.entity.MonthlyPrices;
-import com.ftn.WebXML2018.XWS_2018_Backend.entity.Reservation;
-import com.ftn.WebXML2018.XWS_2018_Backend.enums.SortModes;
 import com.ftn.WebXML2018.XWS_2018_Backend.responseWrapper.ResponseWrapper;
+import com.ftn.WebXML2018.XWS_2018_Backend.service.AccomodationCategoryService;
+import com.ftn.WebXML2018.XWS_2018_Backend.service.AccomodationTypeService;
+import com.ftn.WebXML2018.XWS_2018_Backend.service.BonusFeaturesService;
 import com.ftn.WebXML2018.XWS_2018_Backend.service.BookingUnitService;
 import com.ftn.WebXML2018.XWS_2018_Backend.service.CityService;
 import com.ftn.WebXML2018.XWS_2018_Backend.service.CountryService;
-import com.ftn.WebXML2018.XWS_2018_Backend.service.ReservationService;
+
 
 @RestController
 @RequestMapping(value = "/rest/")
@@ -41,13 +41,19 @@ public class SearchController {
 	private BookingUnitService bookingUnitService;
 	
 	@Autowired
-	private ReservationService reservationService;
-	
-	@Autowired
 	private CountryService countryService;
 	
 	@Autowired
 	private CityService cityService;
+	
+	@Autowired
+	private AccomodationTypeService accomodationTypeService;
+	
+	@Autowired
+	private AccomodationCategoryService accomodationCategoryService;
+	
+	@Autowired
+	private BonusFeaturesService bonusFeaturesService;
 	
 	@RequestMapping(value="getBookingUnits/page={page}&num={num}", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
 	public ResponseWrapper<Page<BookingUnitDTO>> getBookingUnits(@PathVariable int page, @PathVariable int num, @RequestParam(value = "peopleNumber", required = true) int peopleNumber,
@@ -56,7 +62,7 @@ public class SearchController {
 															  @RequestParam(value="country", required = false) Long countryId,
 															  @RequestParam(value="city", required = false) Long cityId,
 															  @RequestBody AdvancedSearchWrapper advancedSearchWrapper){
-		System.out.println(num);
+		
 		if(countryId==null && cityId==null) {
 			return new ResponseWrapper<Page<BookingUnitDTO>>(null,"Morate uneti ili grad ili drzavu za pretragu.",false);
 		}
@@ -130,6 +136,42 @@ public class SearchController {
 		}
 		
 		return new ResponseWrapper<ArrayList<CityCountryDTO>>(retVal,"Uspesno vracena lista gradova i drzava.", true);
+	}
+	
+	@RequestMapping(value="getAllAccomodationTypes",method=RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseWrapper<ArrayList<AccomodationType>> getAllAccomodationTypes(){
+		
+		ArrayList<AccomodationType> accomodationTypes = (ArrayList<AccomodationType>) accomodationTypeService.getAll();
+		
+		if(accomodationTypes==null) {
+			return new ResponseWrapper<ArrayList<AccomodationType>>(null,"Neuspesno vraceni tipovi smestaja.", false);
+		}
+		
+		return new ResponseWrapper<ArrayList<AccomodationType>>(accomodationTypes,"Uspesno vraceni tipovi smestaja.", true);
+	}
+	
+	@RequestMapping(value="getAllAccomodationCategories",method=RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseWrapper<ArrayList<AccomodationCategory>> getAllAccomodationCategories(){
+		
+		ArrayList<AccomodationCategory> accomodationCategories = (ArrayList<AccomodationCategory>) accomodationCategoryService.getAll();
+		
+		if(accomodationCategories==null) {
+			return new ResponseWrapper<ArrayList<AccomodationCategory>>(null,"Neuspesno vracene kategorije smestaja.", false);
+		}
+		
+		return new ResponseWrapper<ArrayList<AccomodationCategory>>(accomodationCategories,"Uspesno vracene kategorije smestaja.", true);
+	}
+	
+	@RequestMapping(value="getAllBonusFeatures",method=RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseWrapper<ArrayList<BonusFeatures>> getAllBonusFeatures(){
+		
+		ArrayList<BonusFeatures> bonusFeatures = (ArrayList<BonusFeatures>) bonusFeaturesService.getAll();
+		
+		if(bonusFeatures==null) {
+			return new ResponseWrapper<ArrayList<BonusFeatures>>(null,"Neuspesno vracene dodatne usluge.", false);
+		}
+		
+		return new ResponseWrapper<ArrayList<BonusFeatures>>(bonusFeatures,"Uspesno vracene dodatne usluge.", true);
 	}
 	
 }

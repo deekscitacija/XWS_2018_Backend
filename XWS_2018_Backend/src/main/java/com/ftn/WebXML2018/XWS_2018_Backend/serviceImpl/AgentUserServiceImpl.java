@@ -63,12 +63,14 @@ public class AgentUserServiceImpl implements AgentUserService{
 		users.stream().forEach(u -> ids.add(u.getId()));
 		
 		agents = agentRepository.getAllByIdIn(ids);
-		if(agents.size() == users.size() && users.size() == regusers.size()) {
-			for(int i=0; i<agents.size(); i++) {
-				ret.add(convertToDTO(agents.get(i), users.get(i), regusers.get(i)));
-			}
+		
+		for(int i=0; i<agents.size(); i++) {
+			Long id = agents.get(i).getId();
+			User u = users.stream().filter(user -> user.getId().equals(id)).findFirst().get();
+			RegisteredUser regu = regusers.stream().filter(r -> r.getId().equals(id)).findFirst().get();
+			ret.add(convertToDTO(agents.get(i), u, regu));
 		}
-			
+		
 		return ret;
 	}
 
@@ -83,10 +85,11 @@ public class AgentUserServiceImpl implements AgentUserService{
 		List<User> users = userRepository.findAllByIdIn(ids);
 		List<RegisteredUser> regUsers = regUserRepository.findAllByIdIn(ids);
 		
-		if(agents.size() == users.size() && users.size() == regUsers.size()) {
-			for(int i=0; i<agents.size(); i++) {
-				ret.add(convertToDTO(agents.get(i), users.get(i), regUsers.get(i)));
-			}
+		for(int i=0; i<agents.size(); i++) {
+			Long id = agents.get(i).getId();
+			User u = users.stream().filter(user -> user.getId().equals(id)).findFirst().get();
+			RegisteredUser regu = regUsers.stream().filter(r -> r.getId().equals(id)).findFirst().get();
+			ret.add(convertToDTO(agents.get(i), u, regu));
 		}
 		
 		return ret;
@@ -141,6 +144,7 @@ public class AgentUserServiceImpl implements AgentUserService{
 	public AgentUserDTO convertToDTO(AgentUser agent, User u, RegisteredUser regu) {
 		AgentUserDTO ret = new AgentUserDTO();
 		
+		ret.setId(u.getId());
 		ret.setCity(u.getCity().getName());
 		ret.setEmail(u.getEmail());
 		ret.setHomeAddress(u.getHomeAddress());
@@ -158,6 +162,7 @@ public class AgentUserServiceImpl implements AgentUserService{
 	public AgentUserDTO convertToDTO(UserDTO userDTO, String pmb) {
 		AgentUserDTO ret = new AgentUserDTO();
 		
+		ret.setId(userDTO.getId());
 		ret.setCity(userDTO.getCity().getName());
 		ret.setEmail(userDTO.getEmail());
 		ret.setHomeAddress(userDTO.getHomeAddress());

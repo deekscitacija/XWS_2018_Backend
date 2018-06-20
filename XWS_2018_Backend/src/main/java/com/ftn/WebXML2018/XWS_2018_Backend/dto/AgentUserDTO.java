@@ -1,6 +1,7 @@
 package com.ftn.WebXML2018.XWS_2018_Backend.dto;
 
 public class AgentUserDTO {
+	private Long id;
 	private String username;
 	private String email;
 	private String name;
@@ -81,4 +82,11 @@ public class AgentUserDTO {
 	public void setPmb(String pmb) {
 		this.pmb = pmb;
 	}
+	public Long getId() {
+		return id;
+	}
+	public void setId(Long id) {
+		this.id = id;
+	}
+	
 }

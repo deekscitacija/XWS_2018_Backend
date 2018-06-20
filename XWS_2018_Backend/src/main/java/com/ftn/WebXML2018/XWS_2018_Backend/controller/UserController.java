@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ftn.WebXML2018.XWS_2018_Backend.dto.UserDTO;
+import com.ftn.WebXML2018.XWS_2018_Backend.dto.UserMiniDTO;
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.User;
 import com.ftn.WebXML2018.XWS_2018_Backend.responseWrapper.ResponseWrapper;
 import com.ftn.WebXML2018.XWS_2018_Backend.service.UserService;
@@ -28,8 +28,8 @@ public class UserController {
 	private UserService userService;
 	
 	@GetMapping("/getByActive/{active}")
-	public ResponseEntity<?> getUserDTOsByActive(@PathVariable("active") Boolean active) {
-		ResponseWrapper<List<UserDTO>> wrapper = null;
+	public ResponseEntity<?> getUserMiniDTOsByActive(@PathVariable("active") Boolean active) {
+		ResponseWrapper<List<UserMiniDTO>> wrapper = null;
 		List<User> users = null;
 		String msg = "";
 		
@@ -40,68 +40,95 @@ public class UserController {
 				users = userService.getDisabledUsers();
 			}
 			
-			List<UserDTO> usersDTO = new ArrayList<UserDTO>();
+			List<UserMiniDTO> usersDTO = new ArrayList<UserMiniDTO>();
 			
 			for(User u : users) {
 				usersDTO.add(userService.convertToDTO(u));
 			}
 			
 			msg = "Success";
-			wrapper = new ResponseWrapper<List<UserDTO>>(usersDTO, msg, true);
+			wrapper = new ResponseWrapper<List<UserMiniDTO>>(usersDTO, msg, true);
 			
 			return ResponseEntity.ok(wrapper);
 		} catch(Exception e) {
 			e.printStackTrace();
 			msg = "Error fetching users";
-			wrapper = new ResponseWrapper<List<UserDTO>>(null, msg, false);
+			wrapper = new ResponseWrapper<List<UserMiniDTO>>(null, msg, false);
+			
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(wrapper);
+		}
+	}
+	
+	@GetMapping("")
+	public ResponseEntity<?> getAllRegistered() {
+		ResponseWrapper<List<UserMiniDTO>> wrapper = null;
+		List<User> users = null;
+		String msg = "";
+		
+		try {
+			users = userService.getAllRegistered();
+			List<UserMiniDTO> usersDTO = new ArrayList<UserMiniDTO>();
+			
+			for(User u : users) {
+				usersDTO.add(userService.convertToDTO(u));
+			}
+			
+			msg = "Success";
+			wrapper = new ResponseWrapper<List<UserMiniDTO>>(usersDTO, msg, true);
+			
+			return ResponseEntity.ok(wrapper);
+		} catch(Exception e) {
+			e.printStackTrace();
+			msg = "Error fetching users";
+			wrapper = new ResponseWrapper<List<UserMiniDTO>>(null, msg, false);
 			
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(wrapper);
 		}
 	}
 	
 	@PutMapping("/activate/{id}")
-	public ResponseEntity<?> activateUserDTO(@PathVariable("id") Long id) {
+	public ResponseEntity<?> activateUserMiniDTO(@PathVariable("id") Long id) {
 		User u = userService.activateUser(id);
-		ResponseWrapper<UserDTO> resp;
+		ResponseWrapper<UserMiniDTO> resp;
 		String msg = "Activation successfull!";
 		
 		if(u == null) {
 			msg = "Error activating user.";
-			resp = new ResponseWrapper<UserDTO>(userService.convertToDTO(u), msg, false);
+			resp = new ResponseWrapper<UserMiniDTO>(userService.convertToDTO(u), msg, false);
 		} else {
-			resp = new ResponseWrapper<UserDTO>(userService.convertToDTO(u), msg, true);
+			resp = new ResponseWrapper<UserMiniDTO>(userService.convertToDTO(u), msg, true);
 		}
 		
 		return ResponseEntity.ok(resp);
 	}
 	
 	@PutMapping("/block/{id}")
-	public ResponseEntity<?> blockUserDTO(@PathVariable("id")Long id) {
+	public ResponseEntity<?> blockUserMiniDTO(@PathVariable("id")Long id) {
 		User u = userService.blockUser(id);
-		ResponseWrapper<UserDTO> resp;
+		ResponseWrapper<UserMiniDTO> resp;
 		String msg = "Blocking successfull!";
 		
 		if(u == null) {
 			msg = "Error blocking user.";
-			resp = new ResponseWrapper<UserDTO>(userService.convertToDTO(u), msg, false);
+			resp = new ResponseWrapper<UserMiniDTO>(userService.convertToDTO(u), msg, false);
 		} else {
-			resp = new ResponseWrapper<UserDTO>(userService.convertToDTO(u), msg, true);
+			resp = new ResponseWrapper<UserMiniDTO>(userService.convertToDTO(u), msg, true);
 		}
 		
 		return ResponseEntity.ok(resp);
 	}
 	
 	@DeleteMapping("/delete/{id}")
-	public ResponseEntity<?> deleteUserDTO(@PathVariable("id")Long id) {
+	public ResponseEntity<?> deleteUserMiniDTO(@PathVariable("id")Long id) {
 		User u = userService.deleteUser(id);
-		ResponseWrapper<UserDTO> resp;
+		ResponseWrapper<UserMiniDTO> resp;
 		String msg = "Deletion successfull!";
 		
 		if(u == null) {
 			msg = "Error deleting user.";
-			resp = new ResponseWrapper<UserDTO>(userService.convertToDTO(u), msg, false);
+			resp = new ResponseWrapper<UserMiniDTO>(userService.convertToDTO(u), msg, false);
 		} else {
-			resp = new ResponseWrapper<UserDTO>(userService.convertToDTO(u), msg, true);
+			resp = new ResponseWrapper<UserMiniDTO>(userService.convertToDTO(u), msg, true);
 		}
 		
 		return ResponseEntity.ok(resp);

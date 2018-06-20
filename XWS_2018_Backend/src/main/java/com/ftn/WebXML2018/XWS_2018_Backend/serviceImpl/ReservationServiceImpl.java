@@ -64,4 +64,10 @@ public class ReservationServiceImpl implements ReservationService{
 		return reservationRepository.findOne(id);
 	}
 
+	@Override
+	public void deleteReservation(Long id) {
+		
+		reservationRepository.delete(id);
+	}
+
 }

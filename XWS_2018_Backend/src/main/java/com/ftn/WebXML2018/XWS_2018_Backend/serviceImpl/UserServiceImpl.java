@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.ftn.WebXML2018.XWS_2018_Backend.dto.UserMiniDTO;
 import com.ftn.WebXML2018.XWS_2018_Backend.dto.UserDTO;
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.AgentUser;
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.City;
@@ -321,19 +322,29 @@ public class UserServiceImpl implements UserService{
 	}
 
 	@Override
-	public UserDTO convertToDTO(User u) {
-		UserDTO dto = new UserDTO();
+	public UserMiniDTO convertToDTO(User u) {
+		UserMiniDTO dto = new UserMiniDTO();
 		
-		dto.setCity(u.getCity());
-		dto.setHomeAddress(u.getHomeAddress());
 		dto.setId(u.getId());
 		dto.setName(u.getName());
-		dto.setRegisteredUser(u.getRegisteredUser());
 		dto.setSurname(u.getSurname());
 		dto.setUsername(u.getUsername());
-		dto.setUserRole(u.getUserRole());
 
 		return dto;
+	}
+
+	@Override
+	public List<User> getAllRegistered() {
+		List<User> ret = null;
+		
+		try {
+			UserRoles role = userRolesRepository.getByName(UserRolesType.REG_USER);
+			ret = userRepository.findAllByUserRole(role);
+			
+			return ret;
+		} catch(HibernateException e) {
+			return ret;
+		}
 	}
 
 }

@@ -35,9 +35,6 @@ public class MessageController {
 	@Autowired
 	private ReservationService reservationService;
 	
-	@Autowired
-	private BookingUnitService bookingUnitService;
-	
 	@Autowired 
 	private UserService userService;
 	

@@ -1,15 +1,20 @@
 package com.ftn.WebXML2018.XWS_2018_Backend.controller;
 
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,6 +36,7 @@ import com.ftn.WebXML2018.XWS_2018_Backend.service.BonusFeaturesService;
 import com.ftn.WebXML2018.XWS_2018_Backend.service.BookingUnitService;
 import com.ftn.WebXML2018.XWS_2018_Backend.service.CityService;
 import com.ftn.WebXML2018.XWS_2018_Backend.service.CountryService;
+import com.ftn.WebXML2018.XWS_2018_Backend.service.MonthlyPricesService;
 
 
 @RestController
@@ -54,6 +60,9 @@ public class SearchController {
 	
 	@Autowired
 	private BonusFeaturesService bonusFeaturesService;
+	
+	@Autowired
+	private MonthlyPricesService monthlyPricesService;
 	
 	@RequestMapping(value="getBookingUnits/page={page}&num={num}", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
 	public ResponseWrapper<Page<BookingUnitDTO>> getBookingUnits(@PathVariable int page, @PathVariable int num, @RequestParam(value = "peopleNumber", required = true) int peopleNumber,
@@ -79,13 +88,13 @@ public class SearchController {
 		try {
 			dateFromDate = dateFormat.parse(dateFrom);
 		} catch (ParseException e) {
-			e.printStackTrace();
+			return new ResponseWrapper<Page<BookingUnitDTO>>(null,"Neuspesno vracene smestajne jedinice.",false);
 		}
 		Date dateToDate = null;
 		try {
 			dateToDate = dateFormat.parse(dateTo);
 		} catch (ParseException e) {
-			e.printStackTrace();
+			return new ResponseWrapper<Page<BookingUnitDTO>>(null,"Neuspesno vracene smestajne jedinice.",false);
 		}
 		
 		if(countryId!=null) {
@@ -100,7 +109,7 @@ public class SearchController {
 			}
 		}	
 		
-		Page<BookingUnitDTO> bookingUnits = bookingUnitService.findBookingUnits(city, country, peopleNumber, dateFromDate, dateToDate, advancedSearchWrapper.getAccomodationTypes(), advancedSearchWrapper.getAccomodationCategories(), advancedSearchWrapper.getBonusFeatures(),  new PageRequest(page,num));
+		Page<BookingUnitDTO> bookingUnits = bookingUnitService.findBookingUnits(city, country, peopleNumber, dateFromDate, dateToDate, advancedSearchWrapper.getSelectedAccomodationTypes(), advancedSearchWrapper.getSelectedAccomodationCategories(), advancedSearchWrapper.getSelectedBonusFeatures(),  new PageRequest(page,num));
 		
 		if(bookingUnits == null) {
 			return new ResponseWrapper<Page<BookingUnitDTO>>(null,"Neuspesno vracene smestajne jedinice.",false);
@@ -173,5 +182,29 @@ public class SearchController {
 		
 		return new ResponseWrapper<ArrayList<BonusFeatures>>(bonusFeatures,"Uspesno vracene dodatne usluge.", true);
 	}
+	
+	@RequestMapping(value = "/getImage", method = RequestMethod.GET, produces = MediaType.IMAGE_PNG_VALUE)
+    public void getImage(@RequestParam(required=true,value="path") String path, HttpServletResponse response) throws IOException {
+
+        ClassPathResource imgFile = new ClassPathResource("images/"+path);
+
+        response.setContentType(MediaType.IMAGE_PNG_VALUE);
+        StreamUtils.copy(imgFile.getInputStream(), response.getOutputStream());
+        
+    }
+    
+	@RequestMapping(value= "/getBookingUnit", method = RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
+	public ResponseWrapper<BookingUnitDTO> getBookingUnit(@RequestParam(value="bookingUnitId", required = true) Long id){
+		
+		
+		BookingUnitDTO bookingUnitDTO = monthlyPricesService.findByBookingUnitId(id);
+		
+		if(bookingUnitDTO==null) {
+			return new ResponseWrapper<BookingUnitDTO>(null,"Neuspesno vracena smestajna jedinica.",false);
+		}
+			
+		return new ResponseWrapper<BookingUnitDTO>(bookingUnitDTO,"Uspesno vracena smestajna jedinica.",true);
+	}
+	
 	
 }

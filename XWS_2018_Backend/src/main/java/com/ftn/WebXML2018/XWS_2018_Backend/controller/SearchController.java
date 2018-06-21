@@ -202,7 +202,7 @@ public class SearchController {
 		if(bookingUnitDTO==null) {
 			return new ResponseWrapper<BookingUnitDTO>(null,"Neuspesno vracena smestajna jedinica.",false);
 		}
-			
+		System.out.println("agsga");
 		return new ResponseWrapper<BookingUnitDTO>(bookingUnitDTO,"Uspesno vracena smestajna jedinica.",true);
 	}
 	

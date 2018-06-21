@@ -8,49 +8,48 @@ import com.ftn.WebXML2018.XWS_2018_Backend.entity.BonusFeatures;
 
 public class AdvancedSearchWrapper {
 
-	private List<AccomodationType> accomodationTypes;
-	private List<AccomodationCategory> accomodationCategories;
-	private List<BonusFeatures> bonusFeatures;
+	private List<AccomodationType> selectedAccomodationTypes;
+	private List<AccomodationCategory> selectedAccomodationCategories;
+	private List<BonusFeatures> selectedBonusFeatures;
 	
 	public AdvancedSearchWrapper() {}
-	
-	public AdvancedSearchWrapper(List<AccomodationType> accomodationTypes,
-			List<AccomodationCategory> accomodationCategories, List<BonusFeatures> bonusFeatures) {
+
+	public AdvancedSearchWrapper(List<AccomodationType> selectedAccomodationTypes,
+			List<AccomodationCategory> selectedAccomodationCategories, List<BonusFeatures> selectedBonusFeatures) {
 		super();
-		this.accomodationTypes = accomodationTypes;
-		this.accomodationCategories = accomodationCategories;
-		this.bonusFeatures = bonusFeatures;
+		this.selectedAccomodationTypes = selectedAccomodationTypes;
+		this.selectedAccomodationCategories = selectedAccomodationCategories;
+		this.selectedBonusFeatures = selectedBonusFeatures;
 	}
 
-
-
-	public List<AccomodationType> getAccomodationTypes() {
-		return accomodationTypes;
+	public List<AccomodationType> getSelectedAccomodationTypes() {
+		return selectedAccomodationTypes;
 	}
 
-	public void setAccomodationTypes(List<AccomodationType> accomodationTypes) {
-		this.accomodationTypes = accomodationTypes;
+	public void setSelectedAccomodationTypes(List<AccomodationType> selectedAccomodationTypes) {
+		this.selectedAccomodationTypes = selectedAccomodationTypes;
 	}
 
-	public List<AccomodationCategory> getAccomodationCategories() {
-		return accomodationCategories;
+	public List<AccomodationCategory> getSelectedAccomodationCategories() {
+		return selectedAccomodationCategories;
 	}
 
-	public void setAccomodationCategories(List<AccomodationCategory> accomodationCategories) {
-		this.accomodationCategories = accomodationCategories;
+	public void setSelectedAccomodationCategories(List<AccomodationCategory> selectedAccomodationCategories) {
+		this.selectedAccomodationCategories = selectedAccomodationCategories;
 	}
 
-	public List<BonusFeatures> getBonusFeatures() {
-		return bonusFeatures;
+	public List<BonusFeatures> getSelectedBonusFeatures() {
+		return selectedBonusFeatures;
 	}
 
-	public void setBonusFeatures(List<BonusFeatures> bonusFeatures) {
-		this.bonusFeatures = bonusFeatures;
+	public void setSelectedBonusFeatures(List<BonusFeatures> selectedBonusFeatures) {
+		this.selectedBonusFeatures = selectedBonusFeatures;
 	}
 
 	@Override
 	public String toString() {
-		return "AdvancedSearchWrapper [accomodationTypes=" + accomodationTypes + ", accomodationCategories="
-				+ accomodationCategories + ", bonusFeatures=" + bonusFeatures + "]";
+		return "AdvancedSearchWrapper [selectedAccomodationTypes=" + selectedAccomodationTypes
+				+ ", selectedAccomodationCategories=" + selectedAccomodationCategories + ", selectedBonusFeatures="
+				+ selectedBonusFeatures + "]";
 	}
 }

@@ -7,9 +7,11 @@ import javax.xml.ws.Endpoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.ws.config.annotation.EnableWs;
 
 import com.ftn.WebXML2018.XWS_2018_Backend.service.AgentEndpointService;
 
+@EnableWs
 @Configuration
 public class WebServiceConfig {
 

@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.BookingUnit;
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.Reservation;
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.User;
+import com.ftn.WebXML2018.XWS_2018_Backend.enums.ReservationStatus;
 import com.ftn.WebXML2018.XWS_2018_Backend.exceptions.ReservationAlredyExsistsException;
 import com.ftn.WebXML2018.XWS_2018_Backend.responseWrapper.ResponseWrapper;
 import com.ftn.WebXML2018.XWS_2018_Backend.security.TokenUtils;
@@ -60,18 +61,18 @@ public class ReservationController {
 			return null;
 		}
 		
-		boolean isConfirmed;
+		ReservationStatus reservationStatus;
 		
 		if(mode == 0) {
-			isConfirmed = false;
+			reservationStatus = ReservationStatus.WAITING;
 		}else if(mode == 1) {
-			isConfirmed = true;
+			reservationStatus = ReservationStatus.CONFIRMED;
 		}else{
 			response.setStatus(HttpStatus.BAD_REQUEST.value());
 			return null;
 		}
 		
-		Page<Reservation> retVal = reservationService.findByRegisteredUserAndConfirmed(user.getRegisteredUser(), isConfirmed, new PageRequest(pageNum-1, 5));
+		Page<Reservation> retVal = reservationService.findByRegisteredUserAndConfirmed(user.getRegisteredUser(), reservationStatus, new PageRequest(pageNum-1, 5));
 		
 		return new ResponseWrapper<Page<Reservation>>(retVal, true);
 	}
@@ -116,6 +117,7 @@ public class ReservationController {
 		newReservation.setBookingUnit(bookingUnit);
 		newReservation.setRegisteredUser(user.getRegisteredUser());
 		newReservation.setTotalPrice(totalPrice);
+		newReservation.setReservationStatus(ReservationStatus.WAITING);
 		
 		Reservation retVal = null;
 		

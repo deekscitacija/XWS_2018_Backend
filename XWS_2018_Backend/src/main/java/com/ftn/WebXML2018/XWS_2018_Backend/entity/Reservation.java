@@ -4,14 +4,17 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.Size;
+
+import com.ftn.WebXML2018.XWS_2018_Backend.enums.ReservationStatus;
 
 @Entity
 public class Reservation {
@@ -32,7 +35,8 @@ public class Reservation {
 	private double totalPrice;
 	
 	@Column(nullable = false)
-	private boolean confirmed;
+	@Enumerated(EnumType.STRING)
+	private ReservationStatus reservationStatus = ReservationStatus.WAITING;
 	
 	@Column(nullable = false)
 	@Size(max = 60)
@@ -52,27 +56,27 @@ public class Reservation {
 		
 	}
 
-	public Reservation(Long id, Date fromDate, Date toDate, double totalPrice, boolean confirmed, 
+	public Reservation(Long id, Date fromDate, Date toDate, double totalPrice, ReservationStatus reservationStatus, 
 			String subjectName, String subjectSurname, RegisteredUser registeredUser, BookingUnit bookingUnit) {
 		super();
 		this.id = id;
 		this.fromDate = fromDate;
 		this.toDate = toDate;
 		this.totalPrice = totalPrice;
-		this.confirmed = confirmed;
+		this.reservationStatus = reservationStatus;
 		this.subjectName = subjectName;
 		this.subjectSurname = subjectSurname;
 		this.registeredUser = registeredUser;
 		this.bookingUnit = bookingUnit;
 	}
 	
-	public Reservation(Date fromDate, Date toDate, double totalPrice, boolean confirmed,
+	public Reservation(Date fromDate, Date toDate, double totalPrice, ReservationStatus reservationStatus,
 			String subjectName, String subjectSurname, RegisteredUser registeredUser, BookingUnit bookingUnit) {
 		super();
 		this.fromDate = fromDate;
 		this.toDate = toDate;
 		this.totalPrice = totalPrice;
-		this.confirmed = confirmed;
+		this.reservationStatus = reservationStatus;
 		this.subjectName = subjectName;
 		this.subjectSurname = subjectSurname;
 		this.registeredUser = registeredUser;
@@ -111,14 +115,6 @@ public class Reservation {
 		this.totalPrice = totalPrice;
 	}
 
-	public boolean isConfirmed() {
-		return confirmed;
-	}
-
-	public void setConfirmed(boolean confirmed) {
-		this.confirmed = confirmed;
-	}
-
 	public String getSubjectName() {
 		return subjectName;
 	}
@@ -151,10 +147,19 @@ public class Reservation {
 		this.bookingUnit = bookingUnit;
 	}
 
+	public ReservationStatus getReservationStatus() {
+		return reservationStatus;
+	}
+
+	public void setReservationStatus(ReservationStatus reservationStatus) {
+		this.reservationStatus = reservationStatus;
+	}
+
 	@Override
 	public String toString() {
 		return "Reservation [id=" + id + ", fromDate=" + fromDate + ", toDate=" + toDate + ", totalPrice=" + totalPrice
-				+ ", confirmed=" + confirmed + ", subjectName=" + subjectName + ", subjectSurname=" + subjectSurname
-				+ "]";
+				+ ", reservationStatus=" + reservationStatus + ", subjectName=" + subjectName + ", subjectSurname="
+				+ subjectSurname + ", registeredUser=" + registeredUser + ", bookingUnit=" + bookingUnit + "]";
 	}
+
 }

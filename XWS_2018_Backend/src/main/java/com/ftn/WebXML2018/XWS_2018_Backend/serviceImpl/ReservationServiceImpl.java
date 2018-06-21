@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.BookingUnit;
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.RegisteredUser;
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.Reservation;
+import com.ftn.WebXML2018.XWS_2018_Backend.enums.ReservationStatus;
 import com.ftn.WebXML2018.XWS_2018_Backend.exceptions.ReservationAlredyExsistsException;
 import com.ftn.WebXML2018.XWS_2018_Backend.repository.ReservationRepository;
 import com.ftn.WebXML2018.XWS_2018_Backend.service.ReservationService;
@@ -31,10 +32,10 @@ public class ReservationServiceImpl implements ReservationService{
 	}
 
 	@Override
-	public Page<Reservation> findByRegisteredUserAndConfirmed(RegisteredUser registeredUser, boolean confirmed,
+	public Page<Reservation> findByRegisteredUserAndConfirmed(RegisteredUser registeredUser, ReservationStatus reservationStatus,
 			Pageable pageable) {
 		
-		return reservationRepository.findByRegisteredUserAndConfirmedOrderByFromDateDesc(registeredUser, confirmed, pageable);
+		return reservationRepository.findByRegisteredUserAndReservationStatusOrderByFromDateDesc(registeredUser, reservationStatus, pageable);
 	}
 
 	@Override

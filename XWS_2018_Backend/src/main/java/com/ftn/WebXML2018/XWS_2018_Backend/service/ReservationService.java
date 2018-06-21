@@ -9,13 +9,14 @@ import org.springframework.data.domain.Pageable;
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.BookingUnit;
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.RegisteredUser;
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.Reservation;
+import com.ftn.WebXML2018.XWS_2018_Backend.enums.ReservationStatus;
 import com.ftn.WebXML2018.XWS_2018_Backend.exceptions.ReservationAlredyExsistsException;
 
 public interface ReservationService {
 
 	public Page<Reservation> findReservationsByUser(RegisteredUser user, Pageable pageable);
 	
-	public Page<Reservation> findByRegisteredUserAndConfirmed(RegisteredUser registeredUser, boolean confirmed, Pageable pageable);
+	public Page<Reservation> findByRegisteredUserAndConfirmed(RegisteredUser registeredUser, ReservationStatus reservationStatus, Pageable pageable);
 
 	public Reservation saveReservation(Reservation reservation) throws ReservationAlredyExsistsException;
 	

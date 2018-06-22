@@ -1,5 +1,9 @@
 package com.ftn.WebXML2018.XWS_2018_Backend.controller;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ftn.WebXML2018.XWS_2018_Backend.dto.BookingUnitDTO;
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.BookingUnit;
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.Reservation;
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.User;
@@ -78,8 +83,10 @@ public class ReservationController {
 	}
 	
 	@PreAuthorize("hasAuthority('REG_USER')")
-	@RequestMapping(value = "makeReservation/{unitId}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseWrapper<Reservation> makeReservation(@PathVariable Long unitId, @RequestBody Reservation newReservation,  HttpServletRequest request, HttpServletResponse response){
+	@RequestMapping(value = "makeReservation", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseWrapper<Reservation> makeReservation(@RequestParam(value="unitId", required = true) Long unitId,
+														@RequestParam(value="dateFrom", required = true) String dateFrom, 
+			  											@RequestParam(value="dateTo", required = true) String dateTo, @RequestBody Reservation newReservation,  HttpServletRequest request, HttpServletResponse response){
 		
 		User user = userService.getUserFromToken(request, tokenUtils);
 		
@@ -93,6 +100,27 @@ public class ReservationController {
 		if(bookingUnit == null) {
 			response.setStatus(HttpStatus.BAD_REQUEST.value());
 			return null;
+		}
+		
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		Date dateFromDate = null;
+		try {
+			dateFromDate = dateFormat.parse(dateFrom);
+		} catch (ParseException e) {
+			return new ResponseWrapper<Reservation>(null,"Neuspesna rezervacija.",false);
+		}
+		Date dateToDate = null;
+		try {
+			dateToDate = dateFormat.parse(dateTo);
+		} catch (ParseException e) {
+			return new ResponseWrapper<Reservation>(null,"Neuspesna rezervacija.",false);
+		}
+
+		newReservation.setFromDate(dateFromDate);
+		newReservation.setToDate(dateToDate);
+		
+		if(!reservationService.findCriticalReservations(bookingUnit, dateFromDate, dateToDate).isEmpty()) {
+			return new ResponseWrapper<Reservation>(null, "Smestaj je zauzet u ovom periodu!", false);
 		}
 		
 		if(newReservation.getFromDate() == null || newReservation.getToDate() == null || 
@@ -128,7 +156,7 @@ public class ReservationController {
 			return new ResponseWrapper<>(null, "Nemoguce obaviti rezerveciju. Pokusajte kasnije.", false);
 		}
 				
-		return new ResponseWrapper<Reservation>(retVal, true);
+		return new ResponseWrapper<Reservation>(retVal, "Vasa rezervacija je uspesno zabelezena.", true);
 	}
 	
 	@PreAuthorize("hasAuthority('REG_USER')")

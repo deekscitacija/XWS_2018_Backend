@@ -48,6 +48,7 @@ import com.ftn.WebXML2018.XWS_2018_Backend.service.CityService;
 import com.ftn.WebXML2018.XWS_2018_Backend.service.CountryService;
 import com.ftn.WebXML2018.XWS_2018_Backend.service.MonthlyPricesService;
 import com.ftn.WebXML2018.XWS_2018_Backend.service.ReservationService;
+import com.ftn.WebXML2018.XWS_2018_Backend.service.UserService;
 
 
 @RestController
@@ -77,6 +78,9 @@ public class SearchController {
 	
 	@Autowired
 	private ReservationService reservationService;
+	
+	@Autowired
+	private UserService userService;
 	
 	@RequestMapping(value="getBookingUnits/page={page}&num={num}", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
 	public ResponseWrapper<Page<BookingUnitDTO>> getBookingUnits(@PathVariable int page, @PathVariable int num, @RequestParam(value = "peopleNumber", required = true) int peopleNumber,
@@ -230,7 +234,6 @@ public class SearchController {
 		
 		RestTemplate restTemplate = new RestTemplate();
 		
-		//HttpsURLConnection.setDefaultHostnameVerifier ((hostname, session) -> true);
 	    HttpEntity<CloudBookingUnitDTO> requestBody = new HttpEntity<CloudBookingUnitDTO>(new CloudBookingUnitDTO(bookingUnitId.longValue()));
 	    ResponseEntity<CloudCommentsDTO> response = restTemplate.postForEntity("https://rating-functions.azurewebsites.net/api/GetCommentsByUnit?code=zh8gHB9Ol4ERFRMQO15F4ZVwqrI8btVINtApAIVt6L5RiAFxYPQC6w==", requestBody , CloudCommentsDTO.class);
 		
@@ -243,7 +246,7 @@ public class SearchController {
 	    		continue;
 	    	}
 	    	
-	    	retVal.add(new CommentDTO(reservation,cloudResponseDTO.getComment(),cloudResponseDTO.getCommentStatus()));
+	    	retVal.add(new CommentDTO(userService.getUser(reservation.getRegisteredUser().getId()),reservation,cloudResponseDTO.getComment(),cloudResponseDTO.getCommentStatus()));
 	    }
 
 		return new ResponseWrapper<ArrayList<CommentDTO>>(retVal,"Uspesno vraceni komentari",true) ;

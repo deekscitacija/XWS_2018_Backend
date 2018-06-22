@@ -7,7 +7,7 @@ import com.ftn.WebXML2018.XWS_2018_Backend.responseWrapper.ResponseWrapper;
 @WebService
 public interface AgentEndpointService {
 
-	public ResponseWrapper<?> agentLogin();
+	public String agentLogin();
 	
 	public ResponseWrapper<?> addBookingUnit();
 	

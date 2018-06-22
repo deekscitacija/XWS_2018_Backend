@@ -17,7 +17,7 @@ import com.ftn.WebXML2018.XWS_2018_Backend.service.UserService;
 
 // localhost:8081/ftn-booking.com/soap-api/agentEndpointService
 @Service
-@WebService(targetNamespace="http://agentservice", serviceName="AgentEndpointService", endpointInterface="com.ftn.WebXML2018.XWS_2018_Backend.service.AgentEndpointService")
+@WebService(serviceName="agentEndpointService", endpointInterface="com.ftn.WebXML2018.XWS_2018_Backend.service.AgentEndpointService")
 public class AgentEndpointServiceImpl implements AgentEndpointService{
 
 	@Autowired
@@ -37,9 +37,9 @@ public class AgentEndpointServiceImpl implements AgentEndpointService{
 	
 	@Override
 	@WebMethod
-	public ResponseWrapper<?> agentLogin() {
+	public String agentLogin() {
 		// TODO Auto-generated method stub
-		return new ResponseWrapper<String>("Success Timeeeeh!", "Success!", true);
+		return "Success Timeeeeh!";
 	}
 
 	@Override

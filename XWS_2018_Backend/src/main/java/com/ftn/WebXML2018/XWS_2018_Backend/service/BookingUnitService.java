@@ -20,4 +20,6 @@ public interface BookingUnitService {
 	
 	public BookingUnit findById(Long id);
 	
+	public BookingUnit insertBookingUnit(BookingUnit bookingUnit);
+	
 }

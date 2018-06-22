@@ -79,4 +79,9 @@ public class MonthlyPricesServiceImpl implements MonthlyPricesService {
 		return new BookingUnitDTO(bookingUnit, reserved, monthlyPrice.getAmount(), new Double(0));	
 	}
 
+	@Override
+	public MonthlyPrices insertMonthlyPrices(MonthlyPrices monthlyPrices) {
+		return monthlyPricesRepository.save(monthlyPrices);
+	}
+
 }

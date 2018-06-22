@@ -24,4 +24,9 @@ public class BookingUnitPictureServiceImpl implements BookingUnitPictureService 
 		return bookingUnitPictureRepository.findOneByBookingUnit(bookingUnit);
 	}
 
+	@Override
+	public BookingUnitPicture insertBookingUnitPicture(BookingUnitPicture bookingUnitPicture) {
+		return bookingUnitPictureRepository.save(bookingUnitPicture);
+	}
+
 }

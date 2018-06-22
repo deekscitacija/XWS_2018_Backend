@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashSet;
@@ -34,6 +36,7 @@ import com.ftn.WebXML2018.XWS_2018_Backend.service.AccomodationTypeService;
 import com.ftn.WebXML2018.XWS_2018_Backend.service.AgentEndpointService;
 import com.ftn.WebXML2018.XWS_2018_Backend.service.AgentUserService;
 import com.ftn.WebXML2018.XWS_2018_Backend.service.BonusFeaturesService;
+import com.ftn.WebXML2018.XWS_2018_Backend.service.BookingUnitPictureService;
 import com.ftn.WebXML2018.XWS_2018_Backend.service.BookingUnitService;
 import com.ftn.WebXML2018.XWS_2018_Backend.service.CityService;
 import com.ftn.WebXML2018.XWS_2018_Backend.service.MessageService;
@@ -76,10 +79,13 @@ public class AgentEndpointServiceImpl implements AgentEndpointService{
 	@Autowired
 	private BonusFeaturesService bFeaturesService;
 	
+	@Autowired
+	private BookingUnitPictureService bUnitPictureService;
+	
 	@Override
 	@WebMethod
 	public String agentLogin() {
-		// TODO Auto-generated method stub
+		// TODO Celokupna sinhronizacija!!!
 		return "Success Timeeeeh!";
 	}
 
@@ -133,15 +139,18 @@ public class AgentEndpointServiceImpl implements AgentEndpointService{
 				bonusFeatures, accType, 
 				accCat, null);
 		
-		//bookingUnitService.
+		BookingUnit unitData = bookingUnitService.insertBookingUnit(unit);
 		
-		Set<BookingUnitPicture> pictures = new HashSet<BookingUnitPicture>();
 		for (Map.Entry<String, String> item : buDto.getBase64ImagesList().entrySet()) {
 		    String base64Img = item.getValue();
 		    String imgName = item.getKey();
 		   
 		    byte[] data = Base64.getDecoder().decode(base64Img);
-		    //dodaj timestamp u ime slike
+		    
+		    String[] tokens = imgName.split("\\.(?=[^\\.]+$)");
+		    String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Timestamp(System.currentTimeMillis()));
+		    
+		    imgName = tokens[0] + timeStamp + tokens[1];
 		    
 			Path destinationFile = Paths.get("/images", imgName);
 			try {
@@ -150,12 +159,12 @@ public class AgentEndpointServiceImpl implements AgentEndpointService{
 				e.printStackTrace();
 			}
 			
-			BookingUnitPicture myPicture = new BookingUnitPicture(imgName, unit);
-			pictures.add(myPicture);
+			BookingUnitPicture myPicture = new BookingUnitPicture(imgName, unitData);
+			bUnitPictureService.insertBookingUnitPicture(myPicture);
 		}	
 				
 		retObj.setSuccess(true);
-		retObj.setResponseBody(new Long(0));
+		retObj.setResponseBody(unitData.getId());
 		return retObj;
 	}
 

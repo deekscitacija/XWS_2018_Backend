@@ -175,4 +175,9 @@ public class AgentUserServiceImpl implements AgentUserService{
 		
 		return ret;
 	}
+
+	@Override
+	public AgentUser getById(Long id) {
+		return agentRepository.findOne(id);
+	}
 }

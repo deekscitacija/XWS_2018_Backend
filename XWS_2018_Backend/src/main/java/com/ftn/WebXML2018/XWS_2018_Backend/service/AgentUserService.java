@@ -28,4 +28,6 @@ public interface AgentUserService {
 	public AgentUserDTO convertToDTO(AgentUser agent, User u, RegisteredUser regu);
 	
 	public AgentUserDTO convertToDTO(UserDTO userDTO, String pmb);
+	
+	public AgentUser getById(Long id);
 }

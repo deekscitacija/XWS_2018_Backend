@@ -14,4 +14,6 @@ public interface MonthlyPricesService {
 	
 	public BookingUnitDTO findByBookingUnitId(Long id);
 	
+	public MonthlyPrices insertMonthlyPrices(MonthlyPrices monthlyPrices);
+	
 }

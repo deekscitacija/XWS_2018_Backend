@@ -12,5 +12,6 @@ public interface BookingUnitPictureService {
 
 	public List<BookingUnitPicture> findAllByBookingUnit(BookingUnit bookingUnit);
 	public List<BookingUnitPicture> findOneByBookingUnit(BookingUnit bookingUnit);
+	public BookingUnitPicture insertBookingUnitPicture(BookingUnitPicture bookingUnitPicture);
 	
 }

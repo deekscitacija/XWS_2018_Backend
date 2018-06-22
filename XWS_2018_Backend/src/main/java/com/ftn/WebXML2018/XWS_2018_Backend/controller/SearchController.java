@@ -13,7 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,14 +23,22 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
+
 import com.ftn.WebXML2018.XWS_2018_Backend.dto.AdvancedSearchWrapper;
 import com.ftn.WebXML2018.XWS_2018_Backend.dto.BookingUnitDTO;
 import com.ftn.WebXML2018.XWS_2018_Backend.dto.CityCountryDTO;
+import com.ftn.WebXML2018.XWS_2018_Backend.dto.CloudBookingUnitDTO;
+import com.ftn.WebXML2018.XWS_2018_Backend.dto.CloudCommentsDTO;
+import com.ftn.WebXML2018.XWS_2018_Backend.dto.CloudResponseDTO;
+import com.ftn.WebXML2018.XWS_2018_Backend.dto.CommentDTO;
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.AccomodationCategory;
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.AccomodationType;
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.BonusFeatures;
+import com.ftn.WebXML2018.XWS_2018_Backend.entity.BookingUnit;
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.City;
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.Country;
+import com.ftn.WebXML2018.XWS_2018_Backend.entity.Reservation;
 import com.ftn.WebXML2018.XWS_2018_Backend.responseWrapper.ResponseWrapper;
 import com.ftn.WebXML2018.XWS_2018_Backend.service.AccomodationCategoryService;
 import com.ftn.WebXML2018.XWS_2018_Backend.service.AccomodationTypeService;
@@ -37,6 +47,7 @@ import com.ftn.WebXML2018.XWS_2018_Backend.service.BookingUnitService;
 import com.ftn.WebXML2018.XWS_2018_Backend.service.CityService;
 import com.ftn.WebXML2018.XWS_2018_Backend.service.CountryService;
 import com.ftn.WebXML2018.XWS_2018_Backend.service.MonthlyPricesService;
+import com.ftn.WebXML2018.XWS_2018_Backend.service.ReservationService;
 
 
 @RestController
@@ -63,6 +74,9 @@ public class SearchController {
 	
 	@Autowired
 	private MonthlyPricesService monthlyPricesService;
+	
+	@Autowired
+	private ReservationService reservationService;
 	
 	@RequestMapping(value="getBookingUnits/page={page}&num={num}", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
 	public ResponseWrapper<Page<BookingUnitDTO>> getBookingUnits(@PathVariable int page, @PathVariable int num, @RequestParam(value = "peopleNumber", required = true) int peopleNumber,
@@ -205,6 +219,37 @@ public class SearchController {
 		
 		return new ResponseWrapper<BookingUnitDTO>(bookingUnitDTO,"Uspesno vracena smestajna jedinica.",true);
 	}
+	
+	@RequestMapping(value="getCommentsForBookingUnit/{bookingUnitId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseWrapper<ArrayList<CommentDTO>> getCommentsForBookingUnit(@PathVariable Long bookingUnitId){
+		
+		BookingUnit bookingUnit = bookingUnitService.findById(bookingUnitId);
+		if(bookingUnit==null) {
+			return new ResponseWrapper<ArrayList<CommentDTO>>(null,"Smestajna jedinica ne postoji", false);
+		}
+		
+		RestTemplate restTemplate = new RestTemplate();
+		
+		//HttpsURLConnection.setDefaultHostnameVerifier ((hostname, session) -> true);
+	    HttpEntity<CloudBookingUnitDTO> requestBody = new HttpEntity<CloudBookingUnitDTO>(new CloudBookingUnitDTO(bookingUnitId.longValue()));
+	    ResponseEntity<CloudCommentsDTO> response = restTemplate.postForEntity("https://rating-functions.azurewebsites.net/api/GetCommentsByUnit?code=zh8gHB9Ol4ERFRMQO15F4ZVwqrI8btVINtApAIVt6L5RiAFxYPQC6w==", requestBody , CloudCommentsDTO.class);
+		
+	    ArrayList<CommentDTO> retVal = new ArrayList<CommentDTO>();
+	    
+	    for(CloudResponseDTO cloudResponseDTO : response.getBody().getComments()) {
+	    	
+	    	Reservation reservation = reservationService.findById(cloudResponseDTO.getReservation_id());
+	    	if(reservation==null) {
+	    		continue;
+	    	}
+	    	
+	    	retVal.add(new CommentDTO(reservation,cloudResponseDTO.getComment(),cloudResponseDTO.getCommentStatus()));
+	    }
+	       
+		return new ResponseWrapper<ArrayList<CommentDTO>>(retVal,"Uspesno vraceni komentari",true) ;
+	}
+	
+	
 	
 	
 }

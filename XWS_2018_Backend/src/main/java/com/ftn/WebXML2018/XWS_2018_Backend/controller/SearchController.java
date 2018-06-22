@@ -245,7 +245,7 @@ public class SearchController {
 	    	
 	    	retVal.add(new CommentDTO(reservation,cloudResponseDTO.getComment(),cloudResponseDTO.getCommentStatus()));
 	    }
-	       
+
 		return new ResponseWrapper<ArrayList<CommentDTO>>(retVal,"Uspesno vraceni komentari",true) ;
 	}
 	

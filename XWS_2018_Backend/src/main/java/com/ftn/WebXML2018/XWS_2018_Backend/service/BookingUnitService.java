@@ -19,4 +19,5 @@ public interface BookingUnitService {
 	public Page<BookingUnitDTO> findBookingUnits(City city, Country country, int peopleNumber, Date startDate, Date endDate, List<AccomodationType> accomodationTypes, List<AccomodationCategory> accomodationCategories, List<BonusFeatures> bonusFeatures, Pageable pageable);
 	
 	public BookingUnit findById(Long id);
+	
 }

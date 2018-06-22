@@ -3,12 +3,14 @@ package com.ftn.WebXML2018.XWS_2018_Backend.serviceImpl;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.BookingUnit;
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.BookingUnitPicture;
 import com.ftn.WebXML2018.XWS_2018_Backend.repository.BookingUnitPictureRepository;
 import com.ftn.WebXML2018.XWS_2018_Backend.service.BookingUnitPictureService;
 
+@Service
 public class BookingUnitPictureServiceImpl implements BookingUnitPictureService {
 
 	@Autowired
@@ -22,6 +24,11 @@ public class BookingUnitPictureServiceImpl implements BookingUnitPictureService 
 	@Override
 	public List<BookingUnitPicture> findOneByBookingUnit(BookingUnit bookingUnit) {
 		return bookingUnitPictureRepository.findOneByBookingUnit(bookingUnit);
+	}
+
+	@Override
+	public BookingUnitPicture insertBookingUnitPicture(BookingUnitPicture bookingUnitPicture) {
+		return bookingUnitPictureRepository.save(bookingUnitPicture);
 	}
 
 }

@@ -5,15 +5,15 @@ import java.util.Date;
 public class PriceDTO {
 	
 	private Long unitId;
-	private Date fromDate;
-	private Date toDate;
+	private String fromDate;
+	private String toDate;
 	private Date currentDate;
 	
 	public PriceDTO() {
 		
 	}
 
-	public PriceDTO(Long unitId, Date fromDate, Date toDate, Date currentDate) {
+	public PriceDTO(Long unitId, String fromDate, String toDate, Date currentDate) {
 		super();
 		this.unitId = unitId;
 		this.fromDate = fromDate;
@@ -21,19 +21,19 @@ public class PriceDTO {
 		this.currentDate = currentDate;
 	}
 	
-	public Date getFromDate() {
+	public String getFromDate() {
 		return fromDate;
 	}
 
-	public void setFromDate(Date fromDate) {
+	public void setFromDate(String fromDate) {
 		this.fromDate = fromDate;
 	}
 
-	public Date getToDate() {
+	public String getToDate() {
 		return toDate;
 	}
 
-	public void setToDate(Date toDate) {
+	public void setToDate(String toDate) {
 		this.toDate = toDate;
 	}
 

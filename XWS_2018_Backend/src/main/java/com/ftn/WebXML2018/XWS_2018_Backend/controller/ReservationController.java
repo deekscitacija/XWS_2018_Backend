@@ -171,7 +171,7 @@ public class ReservationController {
 			return null;
 		}
 		
-		reservationService.deleteReservation(reservationId);
+		reservationService.cancelReservation(forDelete);
 		
 		return new ResponseWrapper<Boolean>(true, true);
 	}

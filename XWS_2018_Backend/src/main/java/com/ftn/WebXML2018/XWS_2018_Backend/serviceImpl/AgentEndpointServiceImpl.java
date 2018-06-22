@@ -1,10 +1,12 @@
 package com.ftn.WebXML2018.XWS_2018_Backend.serviceImpl;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
@@ -83,8 +85,8 @@ public class AgentEndpointServiceImpl implements AgentEndpointService{
 
 	@Override
 	@WebMethod
-	public ResponseWrapper<?> addBookingUnit(BookingUnit_DTO buDto) {
-		ResponseWrapper<?> retObj = new ResponseWrapper<String>();
+	public ResponseWrapper<Long> addBookingUnit(BookingUnit_DTO buDto) {
+		ResponseWrapper<Long> retObj = new ResponseWrapper<Long>();
 		
 		City city = cityService.getOne(buDto.getCityMainServerId());
 		if(city == null) {
@@ -93,7 +95,7 @@ public class AgentEndpointServiceImpl implements AgentEndpointService{
 			return retObj;
 		}
 		
-		AgentUser agentUsr = (AgentUser)userService.getUser(buDto.getAgentMainServerId());
+		AgentUser agentUsr = agentUserService.getById(buDto.getAgentMainServerId());
 		if(agentUsr == null) {
 			retObj.setSuccess(false);
 			retObj.setMessage("Can't find agent data on main server. Please try again.");
@@ -114,7 +116,7 @@ public class AgentEndpointServiceImpl implements AgentEndpointService{
 			return retObj;
 		}
 		
-		Set<BonusFeatures> bonusFeatures;
+		Set<BonusFeatures> bonusFeatures = new HashSet<BonusFeatures>();
 		for(Iterator<Long> i = buDto.getBonusFeaturesMainServerIds().iterator(); i.hasNext();) {
 			Long bfId = i.next();
 			BonusFeatures bFeature = bFeaturesService.getById(bfId);
@@ -133,7 +135,7 @@ public class AgentEndpointServiceImpl implements AgentEndpointService{
 		
 		//bookingUnitService.
 		
-		Set<BookingUnitPicture> pictures;
+		Set<BookingUnitPicture> pictures = new HashSet<BookingUnitPicture>();
 		for (Map.Entry<String, String> item : buDto.getBase64ImagesList().entrySet()) {
 		    String base64Img = item.getValue();
 		    String imgName = item.getKey();
@@ -142,12 +144,18 @@ public class AgentEndpointServiceImpl implements AgentEndpointService{
 		    //dodaj timestamp u ime slike
 		    
 			Path destinationFile = Paths.get("/images", imgName);
-			Files.write(destinationFile, data);
+			try {
+				Files.write(destinationFile, data);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 			
-			BookingUnitPicture myPicture = new BookingUnitPicture(imgName, null);
+			BookingUnitPicture myPicture = new BookingUnitPicture(imgName, unit);
 			pictures.add(myPicture);
 		}	
-		
+				
+		retObj.setSuccess(true);
+		retObj.setResponseBody(new Long(0));
 		return retObj;
 	}
 

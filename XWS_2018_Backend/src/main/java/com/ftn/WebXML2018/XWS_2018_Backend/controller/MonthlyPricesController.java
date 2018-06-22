@@ -65,6 +65,7 @@ public class MonthlyPricesController {
 			return new ResponseWrapper<Double>(null, "Neuspesno dobavljanje cene boravka.", false);
 		}
 		
+		
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		Date dateFromDate = null;
 		try {

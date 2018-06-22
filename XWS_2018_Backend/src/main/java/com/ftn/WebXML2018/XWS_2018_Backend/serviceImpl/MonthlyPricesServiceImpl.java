@@ -43,7 +43,7 @@ public class MonthlyPricesServiceImpl implements MonthlyPricesService {
 		int month = cal.get(Calendar.MONTH);
 		int year = cal.get(Calendar.YEAR);
 		
-		MonthlyPrices monthlyPrice = monthlyPricesRepository.findOneByBookingUnitAndMonthAndYear(bookingUnit, month, year);
+		MonthlyPrices monthlyPrice = monthlyPricesRepository.findOneByBookingUnitAndMonthAndYear(bookingUnit, month+1, year);
 		
 		if(monthlyPrice == null) {
 			return -1.00;
@@ -77,6 +77,11 @@ public class MonthlyPricesServiceImpl implements MonthlyPricesService {
 		BookingUnit bookingUnit = monthlyPrice.getBookingUnit();
 			
 		return new BookingUnitDTO(bookingUnit, reserved, monthlyPrice.getAmount(), new Double(0));	
+	}
+
+	@Override
+	public MonthlyPrices insertMonthlyPrices(MonthlyPrices monthlyPrices) {
+		return monthlyPricesRepository.save(monthlyPrices);
 	}
 
 }

@@ -168,6 +168,11 @@ public class BookingUnitServiceImpl implements BookingUnitService {
 		
 		return bookingUnits;
 	}
+
+	@Override
+	public BookingUnit insertBookingUnit(BookingUnit bookingUnit) {
+		return bookingUnitRepository.save(bookingUnit);
+	}
 	
 
 }

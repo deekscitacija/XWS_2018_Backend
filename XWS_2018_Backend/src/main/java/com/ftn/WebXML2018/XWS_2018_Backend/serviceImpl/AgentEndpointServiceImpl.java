@@ -1,5 +1,6 @@
 package com.ftn.WebXML2018.XWS_2018_Backend.serviceImpl;
 
+import javax.jws.WebMethod;
 import javax.jws.WebService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,42 +36,49 @@ public class AgentEndpointServiceImpl implements AgentEndpointService{
 	private UserService userService;
 	
 	@Override
+	@WebMethod
 	public ResponseWrapper<?> agentLogin() {
 		// TODO Auto-generated method stub
 		return new ResponseWrapper<String>("Success Timeeeeh!", "Success!", true);
 	}
 
 	@Override
+	@WebMethod
 	public ResponseWrapper<?> addBookingUnit() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
+	@WebMethod
 	public ResponseWrapper<?> manageMonthlyPrices() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
+	@WebMethod
 	public ResponseWrapper<?> addLocalReservation() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
+	@WebMethod
 	public ResponseWrapper<?> sendMessage() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
+	@WebMethod
 	public ResponseWrapper<?> confirmReservation() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
+	@WebMethod
 	public ResponseWrapper<?> cancelReservation() {
 		// TODO Auto-generated method stub
 		return null;

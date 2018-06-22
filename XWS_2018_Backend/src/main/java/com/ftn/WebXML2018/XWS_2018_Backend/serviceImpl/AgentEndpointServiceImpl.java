@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ftn.WebXML2018.XWS_2018_Backend.agentDto.BookingUnit_DTO;
+import com.ftn.WebXML2018.XWS_2018_Backend.agentDto.MonthlyPrices_DTO;
 import com.ftn.WebXML2018.XWS_2018_Backend.dto.AgentUserDTO;
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.AccomodationCategory;
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.AccomodationType;
@@ -29,6 +30,7 @@ import com.ftn.WebXML2018.XWS_2018_Backend.entity.BonusFeatures;
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.BookingUnit;
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.BookingUnitPicture;
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.City;
+import com.ftn.WebXML2018.XWS_2018_Backend.entity.MonthlyPrices;
 import com.ftn.WebXML2018.XWS_2018_Backend.repository.BookingUnitRepository;
 import com.ftn.WebXML2018.XWS_2018_Backend.responseWrapper.ResponseWrapper;
 import com.ftn.WebXML2018.XWS_2018_Backend.service.AccomodationCategoryService;
@@ -170,9 +172,43 @@ public class AgentEndpointServiceImpl implements AgentEndpointService{
 
 	@Override
 	@WebMethod
-	public ResponseWrapper<?> manageMonthlyPrices() {
-		// TODO Auto-generated method stub
-		return null;
+	public ResponseWrapper<String> manageMonthlyPrices(MonthlyPrices_DTO mpDto) {
+		ResponseWrapper<String> retObj = new ResponseWrapper<String>();
+		
+		BookingUnit unit = bookingUnitService.findById(mpDto.getBookingUnitMainServerId());
+		if(unit == null) {
+			retObj.setSuccess(false);
+			retObj.setMessage("Wrong booking unit data. Please try again.");
+			return retObj;
+		}
+		
+		boolean isInsert = true;
+		double[] monthlyPrices = mpDto.getMonthlyPrices();
+		MonthlyPrices mPrice = monthlyPricesService.findOneByBookingUnitAndMonthAndYear(unit, 1, mpDto.getYear());
+		if(mPrice == null)
+		{
+			//add new
+			for (int i = 0; i < monthlyPrices.length; i++) {
+				MonthlyPrices mp = new MonthlyPrices(monthlyPrices[i], i + 1, mpDto.getYear(), unit);
+				monthlyPricesService.insertMonthlyPrices(mp);
+			}
+		}
+		else {
+			//update the old ones
+			for (int i = 0; i < monthlyPrices.length; i++) {
+				MonthlyPrices oldPrice = monthlyPricesService.findOneByBookingUnitAndMonthAndYear(unit, i + 1, mpDto.getYear());
+				oldPrice.setAmount(monthlyPrices[i]);
+			}
+			
+			isInsert = false;
+		}
+		
+		retObj.setSuccess(true);
+		if(isInsert)
+			retObj.setResponseBody("INSERT");
+		else
+			retObj.setResponseBody("UPDATE");
+		return retObj;
 	}
 
 	@Override

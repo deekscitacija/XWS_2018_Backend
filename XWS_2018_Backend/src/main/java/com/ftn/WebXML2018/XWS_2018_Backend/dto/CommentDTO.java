@@ -1,20 +1,23 @@
 package com.ftn.WebXML2018.XWS_2018_Backend.dto;
 
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.Reservation;
+import com.ftn.WebXML2018.XWS_2018_Backend.entity.User;
 
 public class CommentDTO {
-
+	
 	private Reservation reservation;
+	private User user;
 	private String content;
 	private String status;
 	
 	public CommentDTO() {}
 	
-	public CommentDTO(Reservation reservation, String content, String status) {
+	public CommentDTO(User user, Reservation reservation, String content, String status) {
 		super();
 		this.reservation = reservation;
 		this.content = content;
 		this.status = status;
+		this.user = user;
 	}
 
 	public Reservation getReservation() {
@@ -39,6 +42,14 @@ public class CommentDTO {
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
 	}
 	
 }

@@ -185,7 +185,7 @@ public class SearchController {
 	
 	@RequestMapping(value = "/getImage", method = RequestMethod.GET, produces = MediaType.IMAGE_PNG_VALUE)
     public void getImage(@RequestParam(required=true,value="path") String path, HttpServletResponse response) throws IOException {
-		System.out.println("gasg");
+		
         ClassPathResource imgFile = new ClassPathResource("images/"+path);
 
         response.setContentType(MediaType.IMAGE_PNG_VALUE);

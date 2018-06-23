@@ -25,7 +25,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="responseWrapper" type="{http://ftn-booking.com/agentEndpoint}ResponseWrapper"/>
+ *         &lt;element name="userName" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="password" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -36,36 +37,63 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-    "responseWrapper"
+    "userName",
+    "password"
 })
-@XmlRootElement(name = "manageMonthlyPricesResponse")
-public class ManageMonthlyPricesResponse {
+@XmlRootElement(name = "agentLoginRequest")
+public class AgentLoginRequest {
 
     @XmlElement(required = true)
-    protected ResponseWrapper responseWrapper;
+    protected String userName;
+    @XmlElement(required = true)
+    protected String password;
 
     /**
-     * Gets the value of the responseWrapper property.
+     * Gets the value of the userName property.
      * 
      * @return
      *     possible object is
-     *     {@link ResponseWrapper }
+     *     {@link String }
      *     
      */
-    public ResponseWrapper getResponseWrapper() {
-        return responseWrapper;
+    public String getUserName() {
+        return userName;
     }
 
     /**
-     * Sets the value of the responseWrapper property.
+     * Sets the value of the userName property.
      * 
      * @param value
      *     allowed object is
-     *     {@link ResponseWrapper }
+     *     {@link String }
      *     
      */
-    public void setResponseWrapper(ResponseWrapper value) {
-        this.responseWrapper = value;
+    public void setUserName(String value) {
+        this.userName = value;
+    }
+
+    /**
+     * Gets the value of the password property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getPassword() {
+        return password;
+    }
+
+    /**
+     * Sets the value of the password property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setPassword(String value) {
+        this.password = value;
     }
 
 }

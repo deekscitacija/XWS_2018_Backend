@@ -35,7 +35,7 @@ public class WebServiceConfig extends WsConfigurerAdapter {
 		return new SimpleXsdSchema(new ClassPathResource("agentEndpointSchema.xsd"));
 	}
 
-	@Bean
+	@Bean("gimmewsdl")
 	public DefaultWsdl11Definition wsdlDefinition(XsdSchema s) {
 		DefaultWsdl11Definition def = new DefaultWsdl11Definition();
 		def.setSchema(s);

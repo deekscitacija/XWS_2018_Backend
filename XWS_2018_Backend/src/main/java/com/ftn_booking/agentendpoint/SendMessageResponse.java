@@ -38,8 +38,8 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "", propOrder = {
     "responseWrapper"
 })
-@XmlRootElement(name = "manageMonthlyPricesResponse")
-public class ManageMonthlyPricesResponse {
+@XmlRootElement(name = "sendMessageResponse")
+public class SendMessageResponse {
 
     @XmlElement(required = true)
     protected ResponseWrapper responseWrapper;

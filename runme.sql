@@ -16,3 +16,7 @@ INSERT INTO xws_2018_db.user VALUES(2, 'dvojka@gmail', 'Ako budem kucao bazu', '
 INSERT INTO xws_2018_db.user VALUES(3, 'trojka@gmail', 'Poludecu', 'RikiHaker', '$2a$10$jtXXduPiYQXFhNePdc8GmeCQb8r63fnduV9BDHiw6bJnV1WmDAKqG', 'Ribar', 'tawa', 1, 1);
 INSERT INTO xws_2018_db.user VALUES(4, 'tusekumapf@gmail', 'NJENJEEE', 'RikiMartin', '$2a$10$jtXXduPiYQXFhNePdc8GmeCQb8r63fnduV9BDHiw6bJnV1WmDAKqG', 'Zawa', 'zawa', 1, 2);
 INSERT INTO xws_2018_db.user VALUES(5, 'aaaa@gmail', 'NJEE', 'BrateShvtim', '$2a$10$jtXXduPiYQXFhNePdc8GmeCQb8r63fnduV9BDHiw6bJnV1WmDAKqG', 'Rawa', 'rawa', 1, 2);
+
+INSERT INTO xws_2018_db.accomodation_category VALUES(1, 'Luxuz bajo', 5);
+INSERT INTO xws_2018_db.accomodation_type VALUES(1, 'Akomodacija luksuz bajo');
+INSERT INTO xws_2018_db.booking_unit VALUES(1, 'adsf', 'desc', 'Pefkohori', 5, 1,1,4,1)

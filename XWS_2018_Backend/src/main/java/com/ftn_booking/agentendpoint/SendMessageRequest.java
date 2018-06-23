@@ -25,7 +25,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="responseWrapper" type="{http://ftn-booking.com/agentEndpoint}ResponseWrapper"/>
+ *         &lt;element name="message" type="{http://ftn-booking.com/agentEndpoint}Message"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -36,36 +36,36 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-    "responseWrapper"
+    "message"
 })
-@XmlRootElement(name = "manageMonthlyPricesResponse")
-public class ManageMonthlyPricesResponse {
+@XmlRootElement(name = "sendMessageRequest")
+public class SendMessageRequest {
 
     @XmlElement(required = true)
-    protected ResponseWrapper responseWrapper;
+    protected Message message;
 
     /**
-     * Gets the value of the responseWrapper property.
+     * Gets the value of the message property.
      * 
      * @return
      *     possible object is
-     *     {@link ResponseWrapper }
+     *     {@link Message }
      *     
      */
-    public ResponseWrapper getResponseWrapper() {
-        return responseWrapper;
+    public Message getMessage() {
+        return message;
     }
 
     /**
-     * Sets the value of the responseWrapper property.
+     * Sets the value of the message property.
      * 
      * @param value
      *     allowed object is
-     *     {@link ResponseWrapper }
+     *     {@link Message }
      *     
      */
-    public void setResponseWrapper(ResponseWrapper value) {
-        this.responseWrapper = value;
+    public void setMessage(Message value) {
+        this.message = value;
     }
 
 }

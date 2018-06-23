@@ -25,7 +25,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="responseWrapper" type="{http://ftn-booking.com/agentEndpoint}ResponseWrapper"/>
+ *         &lt;element name="localReservation" type="{http://ftn-booking.com/agentEndpoint}Reservation"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -36,36 +36,36 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-    "responseWrapper"
+    "localReservation"
 })
-@XmlRootElement(name = "manageMonthlyPricesResponse")
-public class ManageMonthlyPricesResponse {
+@XmlRootElement(name = "addLocalReservationRequest")
+public class AddLocalReservationRequest {
 
     @XmlElement(required = true)
-    protected ResponseWrapper responseWrapper;
+    protected Reservation localReservation;
 
     /**
-     * Gets the value of the responseWrapper property.
+     * Gets the value of the localReservation property.
      * 
      * @return
      *     possible object is
-     *     {@link ResponseWrapper }
+     *     {@link Reservation }
      *     
      */
-    public ResponseWrapper getResponseWrapper() {
-        return responseWrapper;
+    public Reservation getLocalReservation() {
+        return localReservation;
     }
 
     /**
-     * Sets the value of the responseWrapper property.
+     * Sets the value of the localReservation property.
      * 
      * @param value
      *     allowed object is
-     *     {@link ResponseWrapper }
+     *     {@link Reservation }
      *     
      */
-    public void setResponseWrapper(ResponseWrapper value) {
-        this.responseWrapper = value;
+    public void setLocalReservation(Reservation value) {
+        this.localReservation = value;
     }
 
 }

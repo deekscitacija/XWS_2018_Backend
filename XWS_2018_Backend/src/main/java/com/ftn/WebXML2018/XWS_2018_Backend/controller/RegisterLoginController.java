@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.mail.MessagingException;
 import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 
 import org.modelmapper.ModelMapper;
@@ -234,4 +235,36 @@ public class RegisterLoginController {
 		ResponseWrapper ret = new ResponseWrapper<AuthenticationResponse>(response, "Success!", true);
 		return ResponseEntity.ok(ret);
 	}
+	
+	@PreAuthorize("hasAuthority('REG_USER')")
+	@RequestMapping(value = "secured/changeCurrentPass", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseWrapper<String> changeCurrentPassword(@RequestParam(value="oldPass", required = true) String oldPass,
+											      @RequestParam(value="newPass", required = true) String newPass, ServletRequest request, HttpServletResponse response){
+		
+		System.out.println("====================================");
+		System.out.println(oldPass+" "+newPass);
+		
+		User user = userService.getUserFromToken(request, tokenUtils);
+		
+		if(oldPass.trim().isEmpty() || newPass.trim().isEmpty()) {
+			response.setStatus(HttpStatus.BAD_REQUEST.value());
+			return null;
+		}
+		
+		if(user == null) {
+			response.setStatus(HttpStatus.BAD_REQUEST.value());
+			return null;
+		}
+		
+		if(!this.passwordEncoder.matches(oldPass, user.getPassword())) {
+			response.setStatus(HttpStatus.BAD_REQUEST.value());
+			return null;
+		}
+		
+		user.setPassword(this.passwordEncoder.encode(newPass));
+		userService.saveUser(user);
+		
+		return new ResponseWrapper<>(null, "Uspesna izmena lozinke, mozete se prijaviti sa svojom novom lozinkom.", true);
+	}
+	
 }

@@ -25,4 +25,6 @@ public interface ReservationService {
 	public Reservation findById(Long id);
 	
 	public void deleteReservation(Long id);
+	
+	public Reservation cancelReservation(Reservation reservation);
 }

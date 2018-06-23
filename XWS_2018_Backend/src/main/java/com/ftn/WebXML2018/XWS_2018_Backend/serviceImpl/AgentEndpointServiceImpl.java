@@ -36,6 +36,7 @@ import com.ftn.WebXML2018.XWS_2018_Backend.entity.BookingUnit;
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.BookingUnitPicture;
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.City;
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.MonthlyPrices;
+import com.ftn.WebXML2018.XWS_2018_Backend.entity.User;
 import com.ftn.WebXML2018.XWS_2018_Backend.repository.BookingUnitRepository;
 import com.ftn.WebXML2018.XWS_2018_Backend.service.AccomodationCategoryService;
 import com.ftn.WebXML2018.XWS_2018_Backend.service.AccomodationTypeService;
@@ -65,6 +66,7 @@ import com.ftn_booking.agentendpoint.ManageMonthlyPricesResponse;
 import com.ftn_booking.agentendpoint.ResponseWrapper;
 import com.ftn_booking.agentendpoint.SendMessageRequest;
 import com.ftn_booking.agentendpoint.SendMessageResponse;
+import com.ftn_booking.agentendpoint.SinchronizationObject;
 
 @Endpoint
 public class AgentEndpointServiceImpl {
@@ -105,8 +107,28 @@ public class AgentEndpointServiceImpl {
 	@PayloadRoot(namespace = "http://ftn-booking.com/agentEndpoint", localPart = "agentLoginRequest")
 	@ResponsePayload
 	public AgentLoginResponse agentLogin(@RequestPayload AgentLoginRequest alRequest) {
-		// TODO Auto-generated method stub
-		return null;
+		AgentLoginResponse response = new AgentLoginResponse();
+		ResponseWrapper retObj = new ResponseWrapper();
+		
+		User agentUsr = userService.getByUsername(alRequest.getUserName());
+		if(agentUsr == null) {
+			retObj.setMessage("Agent with the given email does not exist.");
+			retObj.setSuccess(false);
+			response.setResponseWrapper(retObj);
+			return response;
+		}
+		else if(!agentUsr.getPassword().equals(alRequest.getPassword())){
+			retObj.setMessage("Incorrect password.");
+			retObj.setSuccess(false);
+			response.setResponseWrapper(retObj);
+			return response;
+		}
+		else {
+			com.ftn_booking.agentendpoint.SinchronizationObject synchObj = new SinchronizationObject();	
+			
+		}			
+		
+		return response;
 	}
 	
 	@PayloadRoot(namespace = "http://ftn-booking.com/agentEndpoint", localPart = "addBookingUnitRequest")

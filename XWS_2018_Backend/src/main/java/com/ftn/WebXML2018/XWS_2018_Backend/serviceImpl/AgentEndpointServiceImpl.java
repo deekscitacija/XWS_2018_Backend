@@ -11,7 +11,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -357,6 +359,7 @@ public class AgentEndpointServiceImpl {
 		return response;
 	}
 
+	//C#
 	@PayloadRoot(namespace = "http://ftn-booking.com/agentEndpoint", localPart = "addLocalReservationRequest")
 	@ResponsePayload
 	public AddLocalReservationResponse addLocalReservation(@RequestPayload AddLocalReservationRequest alrRequest) throws ParseException {
@@ -382,6 +385,7 @@ public class AgentEndpointServiceImpl {
 			wrapper.setResponseBody(respBody.getId());
 			resp.setResponseWrapper(wrapper);
 		} catch(Exception e) {
+			e.printStackTrace();
 			wrapper.setMessage("Adding reservation failed. Please, try again later.");
 			wrapper.setSuccess(false);
 			wrapper.setResponseBody(null);
@@ -391,7 +395,9 @@ public class AgentEndpointServiceImpl {
 		return resp;
 	}
 
-	public SendMessageResponse sendMessage(SendMessageRequest smRequest) {
+	@PayloadRoot(namespace = "http://ftn-booking.com/agentEndpoint", localPart = "sendMessageRequest")
+	@ResponsePayload
+	public SendMessageResponse sendMessage(@RequestPayload SendMessageRequest smRequest) {
 		Message fromRequest = smRequest.getMessage();
 		ResponseWrapper wrapper = new ResponseWrapper();
 		SendMessageResponse response = new SendMessageResponse();
@@ -419,6 +425,7 @@ public class AgentEndpointServiceImpl {
 				response.setResponseWrapper(wrapper);
 			}
 		} catch(Exception e) {
+			e.printStackTrace();
 			wrapper.setMessage("Error sending message. Please, try again later.");
 			wrapper.setSuccess(false);
 			wrapper.setResponseBody(null);
@@ -428,7 +435,9 @@ public class AgentEndpointServiceImpl {
 		return response;
 	}
 
-	public ConfirmReservationResponse confirmReservation(ConfirmReservationRequest confrRequest) {
+	@PayloadRoot(namespace = "http://ftn-booking.com/agentEndpoint", localPart = "confirmReservationRequest")
+	@ResponsePayload
+	public ConfirmReservationResponse confirmReservation(@RequestPayload ConfirmReservationRequest confrRequest) {
 		ReservationLite fromRequest = confrRequest.getReservationLite();
 		ResponseWrapper wrapper = new ResponseWrapper();
 		ConfirmReservationResponse resp = new ConfirmReservationResponse();
@@ -438,7 +447,7 @@ public class AgentEndpointServiceImpl {
 			
 			if(reservation != null) {
 				reservation.setReservationStatus(ReservationStatus.CONFIRMED);
-				reservation = reservationService.saveReservation(reservation);
+				reservation = reservationService.confirmReservation(reservation);
 				wrapper.setMessage("Reservation confirmed!.");
 				wrapper.setSuccess(true);
 				wrapper.setResponseBody(reservation.getId());
@@ -460,7 +469,9 @@ public class AgentEndpointServiceImpl {
 		return resp;
 	}
 
-	public CancelReservationResponse cancelReservation(CancelReservationRequest cancrRequest) {
+	@PayloadRoot(namespace = "http://ftn-booking.com/agentEndpoint", localPart = "cancelReservationRequest")
+	@ResponsePayload
+	public CancelReservationResponse cancelReservation(@RequestPayload CancelReservationRequest cancrRequest) {
 		ReservationLite fromRequest = cancrRequest.getReservationLite();
 		ResponseWrapper wrapper = new ResponseWrapper();
 		CancelReservationResponse resp = new CancelReservationResponse();
@@ -470,7 +481,7 @@ public class AgentEndpointServiceImpl {
 			
 			if(reservation != null) {
 				reservation.setReservationStatus(ReservationStatus.CANCELED);
-				reservation = reservationService.saveReservation(reservation);
+				reservation = reservationService.cancelReservation(reservation);
 				wrapper.setMessage("Reservation canceled!.");
 				wrapper.setSuccess(true);
 				wrapper.setResponseBody(reservation.getId());
@@ -493,10 +504,9 @@ public class AgentEndpointServiceImpl {
 	}
 	
 	private Date parseDate(String dateString) throws ParseException {
-	    DateFormat df = new SimpleDateFormat("YYYY-MM-DD", Locale.ENGLISH);
-	    Date result =  df.parse(dateString);  
-	    System.out.println(result);
+		DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+		Date date = formatter.parse(dateString);
 	    
-	    return result;
+	    return date;
 	}
 }

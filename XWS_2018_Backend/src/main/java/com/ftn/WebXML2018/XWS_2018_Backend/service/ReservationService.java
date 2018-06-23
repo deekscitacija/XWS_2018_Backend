@@ -28,5 +28,7 @@ public interface ReservationService {
 	
 	public Reservation cancelReservation(Reservation reservation);
 	
+	public Reservation confirmReservation(Reservation reservation);
+	
 	public List<Reservation> findReservationsByBookingUnit(BookingUnit bookingUnit);
 }

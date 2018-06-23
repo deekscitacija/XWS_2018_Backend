@@ -98,6 +98,10 @@ public class RegisterLoginController {
 			return new ResponseWrapper<>(null, "Nepostojeci username ili password.", false);
 		}
 		
+		if(!user.getRegisteredUser().isActive()) {
+			return new ResponseWrapper<>(null, "Vas nalog nije aktivan.", false);
+		}
+		
 		if(!passwordEncoder.matches(password, user.getPassword())) {
 			return new ResponseWrapper<>(null, "Nepostojeci username ili password.", false);
 		}

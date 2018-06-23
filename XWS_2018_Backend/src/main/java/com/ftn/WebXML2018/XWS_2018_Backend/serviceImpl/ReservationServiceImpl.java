@@ -71,4 +71,18 @@ public class ReservationServiceImpl implements ReservationService{
 		reservationRepository.delete(id);
 	}
 
+	@Override
+	public Reservation cancelReservation(Reservation reservation) {
+		
+		reservation.setReservationStatus(ReservationStatus.CANCELED);
+		reservation = reservationRepository.save(reservation);
+		
+		return reservation;
+	}
+
+	@Override
+	public List<Reservation> findReservationsByBookingUnit(BookingUnit bookingUnit) {
+		return reservationRepository.findReservationsByBookingUnit(bookingUnit);
+	}
+
 }

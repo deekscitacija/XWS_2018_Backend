@@ -35,4 +35,13 @@ public class MessageServiceImpl implements MessageService{
 		return messageRepository.findByRecipientOrderByIdDesc(user, pageable);
 	}
 
+	@Override
+	public List<Message> findBySenderOrRecipientNonPageable(User user, boolean sender) {
+		if(sender) {
+			return messageRepository.findBySenderOrderByIdDesc(user);
+		}
+		
+		return messageRepository.findByRecipientOrderByIdDesc(user);
+	}
+
 }

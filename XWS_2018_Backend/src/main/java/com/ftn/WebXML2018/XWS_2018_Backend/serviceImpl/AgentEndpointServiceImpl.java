@@ -1,6 +1,7 @@
 package com.ftn.WebXML2018.XWS_2018_Backend.serviceImpl;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -21,6 +22,7 @@ import java.util.Set;
 
 import javax.jws.WebMethod;
 import javax.jws.WebService;
+import javax.xml.datatype.DatatypeConfigurationException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -39,9 +41,11 @@ import com.ftn.WebXML2018.XWS_2018_Backend.entity.BonusFeatures;
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.BookingUnit;
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.BookingUnitPicture;
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.City;
+import com.ftn.WebXML2018.XWS_2018_Backend.entity.Country;
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.MonthlyPrices;
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.User;
 import com.ftn.WebXML2018.XWS_2018_Backend.enums.ReservationStatus;
+import com.ftn.WebXML2018.XWS_2018_Backend.helpClasses.Entity2SoapConverter;
 import com.ftn.WebXML2018.XWS_2018_Backend.repository.BookingUnitRepository;
 import com.ftn.WebXML2018.XWS_2018_Backend.service.AccomodationCategoryService;
 import com.ftn.WebXML2018.XWS_2018_Backend.service.AccomodationTypeService;
@@ -51,6 +55,7 @@ import com.ftn.WebXML2018.XWS_2018_Backend.service.BonusFeaturesService;
 import com.ftn.WebXML2018.XWS_2018_Backend.service.BookingUnitPictureService;
 import com.ftn.WebXML2018.XWS_2018_Backend.service.BookingUnitService;
 import com.ftn.WebXML2018.XWS_2018_Backend.service.CityService;
+import com.ftn.WebXML2018.XWS_2018_Backend.service.CountryService;
 import com.ftn.WebXML2018.XWS_2018_Backend.service.MessageService;
 import com.ftn.WebXML2018.XWS_2018_Backend.service.MonthlyPricesService;
 import com.ftn.WebXML2018.XWS_2018_Backend.service.ReservationService;
@@ -74,10 +79,20 @@ import com.ftn_booking.agentendpoint.ReservationLite;
 import com.ftn_booking.agentendpoint.ResponseWrapper;
 import com.ftn_booking.agentendpoint.SendMessageRequest;
 import com.ftn_booking.agentendpoint.SendMessageResponse;
+import com.ftn_booking.agentendpoint.SinchronizationObject;
 
 @Endpoint
 public class AgentEndpointServiceImpl {
 
+	@Autowired
+	private AccomodationCategoryService accomodationCategoryService;
+	
+	@Autowired
+	private AccomodationTypeService accomodationTypeService;
+	
+	@Autowired
+	private BonusFeaturesService bonusFeaturesService;
+	
 	@Autowired
 	private BookingUnitService bookingUnitService;
 	
@@ -97,6 +112,9 @@ public class AgentEndpointServiceImpl {
 	private CityService cityService;
 	
 	@Autowired
+	private CountryService countryService;
+	
+	@Autowired
 	private AccomodationTypeService accTypeService;
 	
 	@Autowired
@@ -114,10 +132,83 @@ public class AgentEndpointServiceImpl {
 	@PayloadRoot(namespace = "http://ftn-booking.com/agentEndpoint", localPart = "agentLoginRequest")
 	@ResponsePayload
 	public AgentLoginResponse agentLogin(@RequestPayload AgentLoginRequest alRequest) {
-		// TODO Auto-generated method stub
-		return null;
+		AgentLoginResponse response = new AgentLoginResponse();
+		ResponseWrapper retObj = new ResponseWrapper();
+
+		User agentUsr = userService.getByUsername(alRequest.getUserName());
+		AgentUser agent = null;
+		if(agentUsr == null) {
+			retObj.setMessage("Agent with the given email does not exist.");
+			retObj.setSuccess(false);
+			response.setResponseWrapper(retObj);
+			return response;
+		}
+		else if(!agentUsr.getPassword().equals(alRequest.getPassword())){
+			retObj.setMessage("Incorrect password.");
+			retObj.setSuccess(false);
+			response.setResponseWrapper(retObj);
+			return response;
+		}
+		else {
+			try {
+				agent = agentUserService.getById(agentUsr.getId());
+				SinchronizationObject synchObj = createSyncObject(agentUsr, agent);
+				
+			} catch(Exception e) {
+				retObj.setMessage("Synchronization failed. Please, try again.");
+				retObj.setSuccess(false);
+				response.setResponseWrapper(retObj);
+			}
+		}			
+		
+		return response;
 	}
 	
+	private SinchronizationObject createSyncObject(User u, AgentUser agentUser) {
+		SinchronizationObject synchObj = new SinchronizationObject();	
+		List<City> cities = cityService.getAll();
+		List<Country> countries = countryService.getAll();
+		List<AccomodationCategory> categories = accomodationCategoryService.getAll();
+		List<AccomodationType> types = accomodationTypeService.getAll();
+		List<BonusFeatures> features = bonusFeaturesService.getAll();
+		List<com.ftn.WebXML2018.XWS_2018_Backend.entity.Message> sentMessages = messageService.findBySenderOrRecipientNonPageable(u, true);
+		List<com.ftn.WebXML2018.XWS_2018_Backend.entity.Message> recievedMessages = messageService.findBySenderOrRecipientNonPageable(u, false);
+		List<BookingUnit> bookingUnits = bookingUnitService.findBookingUnitByAgent(agentUser);
+		List<com.ftn.WebXML2018.XWS_2018_Backend.entity.Reservation> reservations = new ArrayList<>();
+		
+		try {
+			bookingUnits.stream().forEach(bu -> reservations.addAll(reservationService.findReservationsByBookingUnit(bu)));
+			
+			countries.stream().forEach(country -> synchObj.getCountriesList()
+							  							  .add(Entity2SoapConverter.convertCountry(country)));
+			cities.stream().forEach(city -> synchObj.getCitiesList()
+											.add(Entity2SoapConverter.convertCity(city)));
+			categories.stream().forEach(category -> synchObj.getAccCatsList()
+															.add(Entity2SoapConverter.convertCategory(category)));
+			types.stream().forEach(type -> synchObj.getAccTypesList()
+													.add(Entity2SoapConverter.convertType(type)));
+			features.stream().forEach(feature -> synchObj.getBonusFeaturesList()
+														 .add(Entity2SoapConverter.convertBonus(feature)));
+			sentMessages.stream().forEach(msg -> synchObj.getRegUserMessagesList()
+														.add(Entity2SoapConverter.convertMessage(msg, agentUser)));
+			recievedMessages.stream().forEach(msg -> synchObj.getRegUserMessagesList()
+														.add(Entity2SoapConverter.convertMessage(msg, agentUser)));
+			reservations.stream().forEach(res -> {
+				try {
+					synchObj.getReservationsList().add(Entity2SoapConverter.convertReservation(res));
+				} catch (DatatypeConfigurationException e) {
+					e.printStackTrace();
+				}
+			});
+				
+		}catch(Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+		
+		return synchObj;
+	}
+
 	@PayloadRoot(namespace = "http://ftn-booking.com/agentEndpoint", localPart = "addBookingUnitRequest")
 	@ResponsePayload
 	public AddBookingUnitResponse addBookingUnit(@RequestPayload  AddBookingUnitRequest abuRequest) {
@@ -213,6 +304,7 @@ public class AgentEndpointServiceImpl {
 		ManageMonthlyPricesResponse response = new ManageMonthlyPricesResponse();
 		ResponseWrapper retObj = new ResponseWrapper();
 		com.ftn_booking.agentendpoint.MonthlyPrices requestMPrice = mmpRequest.getMonthlyPrice();
+		List<Long> mainServerIds = new ArrayList<Long>();
 		
 		BookingUnit unit = bookingUnitService.findById(requestMPrice.getMainServerId());
 		if(unit == null) {
@@ -231,6 +323,7 @@ public class AgentEndpointServiceImpl {
 			for (int i = 0; i < monthlyPrices.size(); i++) {
 				MonthlyPrices mp = new MonthlyPrices(monthlyPrices.get(i), i + 1, requestMPrice.getYear(), unit);
 				monthlyPricesService.insertMonthlyPrices(mp);
+				mainServerIds.add(mp.getId());
 			}
 		}
 		else {
@@ -238,15 +331,17 @@ public class AgentEndpointServiceImpl {
 			for (int i = 0; i < monthlyPrices.size(); i++) {
 				MonthlyPrices oldPrice = monthlyPricesService.findOneByBookingUnitAndMonthAndYear(unit, i + 1, requestMPrice.getYear());
 				oldPrice.setAmount(monthlyPrices.get(i));
+				mainServerIds.add(oldPrice.getId());
 			}			
 			isInsert = false;
 		}
 		
 		retObj.setSuccess(true);
+		retObj.setResponseBody(mainServerIds);
 		if(isInsert)
-			retObj.setResponseBody("INSERT");
+			retObj.setMessage("INSERT");
 		else
-			retObj.setResponseBody("UPDATE");
+			retObj.setMessage("UPDATE");
 		
 		response.setResponseWrapper(retObj);
 		return response;

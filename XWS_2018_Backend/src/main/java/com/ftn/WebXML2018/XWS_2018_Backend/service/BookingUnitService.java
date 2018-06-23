@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import com.ftn.WebXML2018.XWS_2018_Backend.dto.BookingUnitDTO;
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.AccomodationCategory;
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.AccomodationType;
+import com.ftn.WebXML2018.XWS_2018_Backend.entity.AgentUser;
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.BonusFeatures;
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.BookingUnit;
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.City;
@@ -21,5 +22,6 @@ public interface BookingUnitService {
 	public BookingUnit findById(Long id);
 	
 	public BookingUnit insertBookingUnit(BookingUnit bookingUnit);
-	
+
+	public List<BookingUnit> findBookingUnitByAgent(AgentUser agent);
 }

@@ -37,7 +37,7 @@ public class User {
 	@Column(nullable = false)
 	@Size(max = 90)
 	private String email;
-	
+		
 	@ManyToOne(optional = false)
 	private UserRoles userRole;
 	

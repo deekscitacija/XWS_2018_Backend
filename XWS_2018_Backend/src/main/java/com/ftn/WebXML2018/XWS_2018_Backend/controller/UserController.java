@@ -8,6 +8,7 @@ import javax.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,6 +28,7 @@ public class UserController {
 	@Autowired
 	private UserService userService;
 	
+	@PreAuthorize("hasAuthority('ADMIN')")
 	@GetMapping("/getByActive/{active}")
 	public ResponseEntity<?> getUserMiniDTOsByActive(@PathVariable("active") Boolean active) {
 		ResponseWrapper<List<UserMiniDTO>> wrapper = null;
@@ -86,6 +88,7 @@ public class UserController {
 		}
 	}
 	
+	@PreAuthorize("hasAuthority('ADMIN')")
 	@PutMapping("/activate/{id}")
 	public ResponseEntity<?> activateUserMiniDTO(@PathVariable("id") Long id) {
 		User u = userService.activateUser(id);
@@ -102,6 +105,7 @@ public class UserController {
 		return ResponseEntity.ok(resp);
 	}
 	
+	@PreAuthorize("hasAuthority('ADMIN')")
 	@PutMapping("/block/{id}")
 	public ResponseEntity<?> blockUserMiniDTO(@PathVariable("id")Long id) {
 		User u = userService.blockUser(id);
@@ -118,11 +122,24 @@ public class UserController {
 		return ResponseEntity.ok(resp);
 	}
 	
+	@PreAuthorize("hasAuthority('ADMIN')")
 	@DeleteMapping("/delete/{id}")
 	public ResponseEntity<?> deleteUserMiniDTO(@PathVariable("id")Long id) {
-		User u = userService.deleteUser(id);
+//		User u = userService.deleteUser(id);
+//		ResponseWrapper<UserMiniDTO> resp;
+//		String msg = "Deletion successfull!";
+//		
+//		if(u == null) {
+//			msg = "Error deleting user.";
+//			resp = new ResponseWrapper<UserMiniDTO>(userService.convertToDTO(u), msg, false);
+//		} else {
+//			resp = new ResponseWrapper<UserMiniDTO>(userService.convertToDTO(u), msg, true);
+//		}
+//		
+//		return ResponseEntity.ok(resp);
+		User u = userService.blockUser(id);
 		ResponseWrapper<UserMiniDTO> resp;
-		String msg = "Deletion successfull!";
+		String msg = "Deleting successfull!";
 		
 		if(u == null) {
 			msg = "Error deleting user.";

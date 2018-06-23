@@ -46,6 +46,7 @@ import com.ftn.WebXML2018.XWS_2018_Backend.entity.Country;
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.MonthlyPrices;
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.User;
 import com.ftn.WebXML2018.XWS_2018_Backend.enums.ReservationStatus;
+import com.ftn.WebXML2018.XWS_2018_Backend.enums.UserRolesType;
 import com.ftn.WebXML2018.XWS_2018_Backend.helpClasses.Entity2SoapConverter;
 import com.ftn.WebXML2018.XWS_2018_Backend.repository.BookingUnitRepository;
 import com.ftn.WebXML2018.XWS_2018_Backend.service.AccomodationCategoryService;
@@ -138,16 +139,19 @@ public class AgentEndpointServiceImpl {
 	public AgentLoginResponse agentLogin(@RequestPayload AgentLoginRequest alRequest) {
 		AgentLoginResponse response = new AgentLoginResponse();
 		ResponseWrapper retObj = new ResponseWrapper();
-
-		User agentUsr = userService.getByUsername(alRequest.getUserName());
 		AgentUser agent = null;
-		if(agentUsr == null) {
-			retObj.setMessage("Agent with the given email does not exist.");
+		
+		User agentUsr = userService.getByUsername(alRequest.getUserName());
+		if(agentUsr.getUserRole().getName().equals(UserRolesType.AGENT)) {
+			agent = agentUserService.getById(agentUsr.getId());
+		}
+		if(agent == null) {
+			retObj.setMessage("Agent with the given username does not exist.");
 			retObj.setSuccess(false);
 			response.setResponseWrapper(retObj);
 			return response;
 		}
-		else if(!passwordEncoder.matches(agentUsr.getPassword(), alRequest.getPassword())) {
+		else if(!passwordEncoder.matches(alRequest.getPassword(), agentUsr.getPassword())) {
 			retObj.setMessage("Incorrect password.");
 			retObj.setSuccess(false);
 			response.setResponseWrapper(retObj);
@@ -155,9 +159,7 @@ public class AgentEndpointServiceImpl {
 		}
 		else {
 			try {
-				agent = agentUserService.getById(agentUsr.getId());
 				SinchronizationObject synchObj = createSyncObject(agentUsr, agent);
-				
 			} catch(Exception e) {
 				retObj.setMessage("Synchronization failed. Please, try again.");
 				retObj.setSuccess(false);

@@ -25,6 +25,7 @@ import javax.jws.WebService;
 import javax.xml.datatype.DatatypeConfigurationException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.ws.server.endpoint.annotation.Endpoint;
 import org.springframework.ws.server.endpoint.annotation.PayloadRoot;
@@ -85,6 +86,9 @@ import com.ftn_booking.agentendpoint.SinchronizationObject;
 public class AgentEndpointServiceImpl {
 
 	@Autowired
+	private PasswordEncoder passwordEncoder;
+	
+	@Autowired
 	private AccomodationCategoryService accomodationCategoryService;
 	
 	@Autowired
@@ -143,7 +147,7 @@ public class AgentEndpointServiceImpl {
 			response.setResponseWrapper(retObj);
 			return response;
 		}
-		else if(!agentUsr.getPassword().equals(alRequest.getPassword())){
+		else if(!passwordEncoder.matches(agentUsr.getPassword(), alRequest.getPassword())) {
 			retObj.setMessage("Incorrect password.");
 			retObj.setSuccess(false);
 			response.setResponseWrapper(retObj);

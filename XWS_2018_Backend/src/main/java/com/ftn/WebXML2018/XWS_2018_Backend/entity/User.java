@@ -1,5 +1,6 @@
 package com.ftn.WebXML2018.XWS_2018_Backend.entity;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -9,6 +10,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.validation.constraints.Size;
+
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 public class User {
@@ -53,6 +57,7 @@ public class User {
     private AgentUser agentUser;
 	
 	@OneToOne(optional = true)
+	@OnDelete(action=OnDeleteAction.CASCADE)
     @PrimaryKeyJoinColumn
     private RegisteredUser registeredUser;
 	

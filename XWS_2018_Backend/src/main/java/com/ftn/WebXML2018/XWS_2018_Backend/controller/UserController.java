@@ -125,21 +125,9 @@ public class UserController {
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@DeleteMapping("/delete/{id}")
 	public ResponseEntity<?> deleteUserMiniDTO(@PathVariable("id")Long id) {
-//		User u = userService.deleteUser(id);
-//		ResponseWrapper<UserMiniDTO> resp;
-//		String msg = "Deletion successfull!";
-//		
-//		if(u == null) {
-//			msg = "Error deleting user.";
-//			resp = new ResponseWrapper<UserMiniDTO>(userService.convertToDTO(u), msg, false);
-//		} else {
-//			resp = new ResponseWrapper<UserMiniDTO>(userService.convertToDTO(u), msg, true);
-//		}
-//		
-//		return ResponseEntity.ok(resp);
-		User u = userService.blockUser(id);
+		User u = userService.deleteUser(id);
 		ResponseWrapper<UserMiniDTO> resp;
-		String msg = "Deleting successfull!";
+		String msg = "Deletion successfull!";
 		
 		if(u == null) {
 			msg = "Error deleting user.";
@@ -149,5 +137,17 @@ public class UserController {
 		}
 		
 		return ResponseEntity.ok(resp);
+//		User u = userService.blockUser(id);
+//		ResponseWrapper<UserMiniDTO> resp;
+//		String msg = "Deleting successfull!";
+//		
+//		if(u == null) {
+//			msg = "Error deleting user.";
+//			resp = new ResponseWrapper<UserMiniDTO>(userService.convertToDTO(u), msg, false);
+//		} else {
+//			resp = new ResponseWrapper<UserMiniDTO>(userService.convertToDTO(u), msg, true);
+//		}
+//		
+//		return ResponseEntity.ok(resp);
 	}
 }

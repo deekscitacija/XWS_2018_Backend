@@ -160,6 +160,10 @@ public class AgentEndpointServiceImpl {
 		else {
 			try {
 				SinchronizationObject synchObj = createSyncObject(agentUsr, agent);
+				retObj.setMessage("Successfull login!");
+				retObj.setSuccess(true);
+				retObj.setResponseBody(synchObj);
+				response.setResponseWrapper(retObj);
 			} catch(Exception e) {
 				retObj.setMessage("Synchronization failed. Please, try again.");
 				retObj.setSuccess(false);
@@ -206,7 +210,7 @@ public class AgentEndpointServiceImpl {
 					e.printStackTrace();
 				}
 			});
-				
+			
 		}catch(Exception e) {
 			e.printStackTrace();
 			return null;

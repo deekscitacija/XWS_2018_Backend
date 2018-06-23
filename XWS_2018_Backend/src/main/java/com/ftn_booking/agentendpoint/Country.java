@@ -11,21 +11,21 @@ package com.ftn_booking.agentendpoint;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for anonymous complex type.
+ * <p>Java class for Country complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType>
+ * &lt;complexType name="Country">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="responseWrapper" type="{http://ftn-booking.com/agentEndpoint}ResponseWrapper"/>
+ *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="mainServerId" type="{http://www.w3.org/2001/XMLSchema}long"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -35,37 +35,54 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "responseWrapper"
+@XmlType(name = "Country", propOrder = {
+    "name",
+    "mainServerId"
 })
-@XmlRootElement(name = "manageMonthlyPricesResponse")
-public class ManageMonthlyPricesResponse {
+public class Country {
 
     @XmlElement(required = true)
-    protected ResponseWrapper responseWrapper;
+    protected String name;
+    protected long mainServerId;
 
     /**
-     * Gets the value of the responseWrapper property.
+     * Gets the value of the name property.
      * 
      * @return
      *     possible object is
-     *     {@link ResponseWrapper }
+     *     {@link String }
      *     
      */
-    public ResponseWrapper getResponseWrapper() {
-        return responseWrapper;
+    public String getName() {
+        return name;
     }
 
     /**
-     * Sets the value of the responseWrapper property.
+     * Sets the value of the name property.
      * 
      * @param value
      *     allowed object is
-     *     {@link ResponseWrapper }
+     *     {@link String }
      *     
      */
-    public void setResponseWrapper(ResponseWrapper value) {
-        this.responseWrapper = value;
+    public void setName(String value) {
+        this.name = value;
+    }
+
+    /**
+     * Gets the value of the mainServerId property.
+     * 
+     */
+    public long getMainServerId() {
+        return mainServerId;
+    }
+
+    /**
+     * Sets the value of the mainServerId property.
+     * 
+     */
+    public void setMainServerId(long value) {
+        this.mainServerId = value;
     }
 
 }

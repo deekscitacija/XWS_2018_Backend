@@ -25,7 +25,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="responseWrapper" type="{http://ftn-booking.com/agentEndpoint}ResponseWrapper"/>
+ *         &lt;element name="bookingUnit" type="{http://ftn-booking.com/agentEndpoint}BookingUnit"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -36,36 +36,36 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-    "responseWrapper"
+    "bookingUnit"
 })
-@XmlRootElement(name = "manageMonthlyPricesResponse")
-public class ManageMonthlyPricesResponse {
+@XmlRootElement(name = "addBookingUnitRequest")
+public class AddBookingUnitRequest {
 
     @XmlElement(required = true)
-    protected ResponseWrapper responseWrapper;
+    protected BookingUnit bookingUnit;
 
     /**
-     * Gets the value of the responseWrapper property.
+     * Gets the value of the bookingUnit property.
      * 
      * @return
      *     possible object is
-     *     {@link ResponseWrapper }
+     *     {@link BookingUnit }
      *     
      */
-    public ResponseWrapper getResponseWrapper() {
-        return responseWrapper;
+    public BookingUnit getBookingUnit() {
+        return bookingUnit;
     }
 
     /**
-     * Sets the value of the responseWrapper property.
+     * Sets the value of the bookingUnit property.
      * 
      * @param value
      *     allowed object is
-     *     {@link ResponseWrapper }
+     *     {@link BookingUnit }
      *     
      */
-    public void setResponseWrapper(ResponseWrapper value) {
-        this.responseWrapper = value;
+    public void setBookingUnit(BookingUnit value) {
+        this.bookingUnit = value;
     }
 
 }

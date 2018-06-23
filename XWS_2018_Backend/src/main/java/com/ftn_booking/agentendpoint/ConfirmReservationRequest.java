@@ -25,7 +25,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="responseWrapper" type="{http://ftn-booking.com/agentEndpoint}ResponseWrapper"/>
+ *         &lt;element name="reservationLite" type="{http://ftn-booking.com/agentEndpoint}ReservationLite"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -36,36 +36,36 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-    "responseWrapper"
+    "reservationLite"
 })
-@XmlRootElement(name = "manageMonthlyPricesResponse")
-public class ManageMonthlyPricesResponse {
+@XmlRootElement(name = "confirmReservationRequest")
+public class ConfirmReservationRequest {
 
     @XmlElement(required = true)
-    protected ResponseWrapper responseWrapper;
+    protected ReservationLite reservationLite;
 
     /**
-     * Gets the value of the responseWrapper property.
+     * Gets the value of the reservationLite property.
      * 
      * @return
      *     possible object is
-     *     {@link ResponseWrapper }
+     *     {@link ReservationLite }
      *     
      */
-    public ResponseWrapper getResponseWrapper() {
-        return responseWrapper;
+    public ReservationLite getReservationLite() {
+        return reservationLite;
     }
 
     /**
-     * Sets the value of the responseWrapper property.
+     * Sets the value of the reservationLite property.
      * 
      * @param value
      *     allowed object is
-     *     {@link ResponseWrapper }
+     *     {@link ReservationLite }
      *     
      */
-    public void setResponseWrapper(ResponseWrapper value) {
-        this.responseWrapper = value;
+    public void setReservationLite(ReservationLite value) {
+        this.reservationLite = value;
     }
 
 }

@@ -19,6 +19,7 @@ import javax.jws.WebService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.ws.server.endpoint.annotation.Endpoint;
 
 import com.ftn.WebXML2018.XWS_2018_Backend.agentDto.BookingUnit_DTO;
 import com.ftn.WebXML2018.XWS_2018_Backend.agentDto.MonthlyPrices_DTO;
@@ -47,8 +48,7 @@ import com.ftn.WebXML2018.XWS_2018_Backend.service.ReservationService;
 import com.ftn.WebXML2018.XWS_2018_Backend.service.UserService;
 
 // localhost:8081/ftn-booking.com/soap-api/agentEndpointService
-@Service
-@WebService(serviceName="agentEndpointService", endpointInterface="com.ftn.WebXML2018.XWS_2018_Backend.service.AgentEndpointService")
+@Endpoint
 public class AgentEndpointServiceImpl implements AgentEndpointService{
 
 	@Autowired

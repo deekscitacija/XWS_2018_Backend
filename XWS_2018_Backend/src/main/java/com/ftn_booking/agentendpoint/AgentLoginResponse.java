@@ -25,7 +25,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="responseWrapper" type="{http://ftn-booking.com/agentEndpoint}ResponseWrapper"/>
+ *         &lt;element name="sincObject" type="{http://ftn-booking.com/agentEndpoint}SinchronizationObject"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -36,36 +36,36 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-    "responseWrapper"
+    "sincObject"
 })
-@XmlRootElement(name = "manageMonthlyPricesResponse")
-public class ManageMonthlyPricesResponse {
+@XmlRootElement(name = "agentLoginResponse")
+public class AgentLoginResponse {
 
     @XmlElement(required = true)
-    protected ResponseWrapper responseWrapper;
+    protected SinchronizationObject sincObject;
 
     /**
-     * Gets the value of the responseWrapper property.
+     * Gets the value of the sincObject property.
      * 
      * @return
      *     possible object is
-     *     {@link ResponseWrapper }
+     *     {@link SinchronizationObject }
      *     
      */
-    public ResponseWrapper getResponseWrapper() {
-        return responseWrapper;
+    public SinchronizationObject getSincObject() {
+        return sincObject;
     }
 
     /**
-     * Sets the value of the responseWrapper property.
+     * Sets the value of the sincObject property.
      * 
      * @param value
      *     allowed object is
-     *     {@link ResponseWrapper }
+     *     {@link SinchronizationObject }
      *     
      */
-    public void setResponseWrapper(ResponseWrapper value) {
-        this.responseWrapper = value;
+    public void setSincObject(SinchronizationObject value) {
+        this.sincObject = value;
     }
 
 }

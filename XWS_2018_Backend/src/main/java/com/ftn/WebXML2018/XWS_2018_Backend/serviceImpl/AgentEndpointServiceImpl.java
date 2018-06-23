@@ -5,12 +5,16 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -36,6 +40,8 @@ import com.ftn.WebXML2018.XWS_2018_Backend.entity.BookingUnit;
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.BookingUnitPicture;
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.City;
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.MonthlyPrices;
+import com.ftn.WebXML2018.XWS_2018_Backend.entity.User;
+import com.ftn.WebXML2018.XWS_2018_Backend.enums.ReservationStatus;
 import com.ftn.WebXML2018.XWS_2018_Backend.repository.BookingUnitRepository;
 import com.ftn.WebXML2018.XWS_2018_Backend.service.AccomodationCategoryService;
 import com.ftn.WebXML2018.XWS_2018_Backend.service.AccomodationTypeService;
@@ -62,6 +68,9 @@ import com.ftn_booking.agentendpoint.ConfirmReservationResponse;
 import com.ftn_booking.agentendpoint.HMapStringStringElement;
 import com.ftn_booking.agentendpoint.ManageMonthlyPricesRequest;
 import com.ftn_booking.agentendpoint.ManageMonthlyPricesResponse;
+import com.ftn_booking.agentendpoint.Message;
+import com.ftn_booking.agentendpoint.Reservation;
+import com.ftn_booking.agentendpoint.ReservationLite;
 import com.ftn_booking.agentendpoint.ResponseWrapper;
 import com.ftn_booking.agentendpoint.SendMessageRequest;
 import com.ftn_booking.agentendpoint.SendMessageResponse;
@@ -245,24 +254,144 @@ public class AgentEndpointServiceImpl {
 
 	@PayloadRoot(namespace = "http://ftn-booking.com/agentEndpoint", localPart = "addLocalReservationRequest")
 	@ResponsePayload
-	public AddLocalReservationResponse addLocalReservation(@RequestPayload AddLocalReservationRequest alrRequest) {
-		// TODO Auto-generated method stub
-		return null;
+	public AddLocalReservationResponse addLocalReservation(@RequestPayload AddLocalReservationRequest alrRequest) throws ParseException {
+		Reservation reservation = alrRequest.getLocalReservation();
+		AddLocalReservationResponse resp = new AddLocalReservationResponse();
+		ResponseWrapper wrapper = new ResponseWrapper();
+		com.ftn.WebXML2018.XWS_2018_Backend.entity.Reservation reserv = new com.ftn.WebXML2018.XWS_2018_Backend.entity.Reservation();
+		
+		BookingUnit booking = bookingUnitService.findById(reservation.getBookingUnitMainServerId());
+		reserv.setBookingUnit(booking);
+		reserv.setRegisteredUser(null);
+		reserv.setReservationStatus(ReservationStatus.WAITING);
+		reserv.setSubjectName(reservation.getReserveeFirstName());
+		reserv.setSubjectSurname(reservation.getReserveeLastName());
+		reserv.setToDate(parseDate(reservation.getDateTo()));
+		reserv.setFromDate(parseDate(reservation.getDateFrom()));
+		reserv.setTotalPrice(monthlyPricesService.calculateTotalPrice(booking, reserv.getFromDate(), reserv.getToDate()));
+		
+		try {
+			com.ftn.WebXML2018.XWS_2018_Backend.entity.Reservation respBody = reservationService.saveReservation(reserv);
+			wrapper.setMessage("Adding reservation successfull!");
+			wrapper.setSuccess(true);
+			wrapper.setResponseBody(respBody.getId());
+			resp.setResponseWrapper(wrapper);
+		} catch(Exception e) {
+			wrapper.setMessage("Adding reservation failed. Please, try again later.");
+			wrapper.setSuccess(false);
+			wrapper.setResponseBody(null);
+			resp.setResponseWrapper(wrapper);
+		}
+		
+		return resp;
 	}
 
 	public SendMessageResponse sendMessage(SendMessageRequest smRequest) {
-		// TODO Auto-generated method stub
-		return null;
+		Message fromRequest = smRequest.getMessage();
+		ResponseWrapper wrapper = new ResponseWrapper();
+		SendMessageResponse response = new SendMessageResponse();
+		com.ftn.WebXML2018.XWS_2018_Backend.entity.Message msg = new com.ftn.WebXML2018.XWS_2018_Backend.entity.Message();
+		
+		try {
+			AgentUser agentSender = agentUserService.getById(fromRequest.getSenderAgentMainServerId());
+			
+			if(agentSender != null) {
+				User recipent = userService.getUser(fromRequest.getReceiverUserMainServerId());
+				User sender = userService.getUser(agentSender.getId());
+				msg.setContent(fromRequest.getContent());
+				msg.setRecipient(recipent);
+				msg.setSender(sender);
+				com.ftn.WebXML2018.XWS_2018_Backend.entity.Message ret = messageService.saveMessage(msg);
+				
+				wrapper.setMessage("Success sending message!");
+				wrapper.setResponseBody(ret.getId());
+				wrapper.setSuccess(true);
+				response.setResponseWrapper(wrapper);
+			} else {
+				wrapper.setMessage("Agent does not exist in database.");
+				wrapper.setSuccess(false);
+				wrapper.setResponseBody(null);
+				response.setResponseWrapper(wrapper);
+			}
+		} catch(Exception e) {
+			wrapper.setMessage("Error sending message. Please, try again later.");
+			wrapper.setSuccess(false);
+			wrapper.setResponseBody(null);
+			response.setResponseWrapper(wrapper);
+		}
+		
+		return response;
 	}
 
 	public ConfirmReservationResponse confirmReservation(ConfirmReservationRequest confrRequest) {
-		// TODO Auto-generated method stub
-		return null;
+		ReservationLite fromRequest = confrRequest.getReservationLite();
+		ResponseWrapper wrapper = new ResponseWrapper();
+		ConfirmReservationResponse resp = new ConfirmReservationResponse();
+		
+		try {
+			com.ftn.WebXML2018.XWS_2018_Backend.entity.Reservation reservation = reservationService.findById(fromRequest.getReservationMainServerId());
+			
+			if(reservation != null) {
+				reservation.setReservationStatus(ReservationStatus.CONFIRMED);
+				reservation = reservationService.saveReservation(reservation);
+				wrapper.setMessage("Reservation confirmed!.");
+				wrapper.setSuccess(true);
+				wrapper.setResponseBody(reservation.getId());
+				resp.setResponseWrapper(wrapper);
+			} else {
+				wrapper.setMessage("Reservation not found.");
+				wrapper.setSuccess(false);
+				wrapper.setResponseBody(null);
+				resp.setResponseWrapper(wrapper);
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+			wrapper.setMessage("Error confirming reservation. Please, try again later.");
+			wrapper.setSuccess(false);
+			wrapper.setResponseBody(null);
+			resp.setResponseWrapper(wrapper);
+		}
+		
+		return resp;
 	}
 
 	public CancelReservationResponse cancelReservation(CancelReservationRequest cancrRequest) {
-		// TODO Auto-generated method stub
-		return null;
+		ReservationLite fromRequest = cancrRequest.getReservationLite();
+		ResponseWrapper wrapper = new ResponseWrapper();
+		CancelReservationResponse resp = new CancelReservationResponse();
+		
+		try {
+			com.ftn.WebXML2018.XWS_2018_Backend.entity.Reservation reservation = reservationService.findById(fromRequest.getReservationMainServerId());
+			
+			if(reservation != null) {
+				reservation.setReservationStatus(ReservationStatus.CANCELED);
+				reservation = reservationService.saveReservation(reservation);
+				wrapper.setMessage("Reservation canceled!.");
+				wrapper.setSuccess(true);
+				wrapper.setResponseBody(reservation.getId());
+				resp.setResponseWrapper(wrapper);
+			} else {
+				wrapper.setMessage("Reservation not found.");
+				wrapper.setSuccess(false);
+				wrapper.setResponseBody(null);
+				resp.setResponseWrapper(wrapper);
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+			wrapper.setMessage("Error confirming reservation. Please, try again later.");
+			wrapper.setSuccess(false);
+			wrapper.setResponseBody(null);
+			resp.setResponseWrapper(wrapper);
+		}
+		
+		return resp;
 	}
-
+	
+	private Date parseDate(String dateString) throws ParseException {
+	    DateFormat df = new SimpleDateFormat("YYYY-MM-DD", Locale.ENGLISH);
+	    Date result =  df.parse(dateString);  
+	    System.out.println(result);
+	    
+	    return result;
+	}
 }

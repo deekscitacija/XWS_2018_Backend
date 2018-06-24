@@ -78,6 +78,8 @@ import com.ftn_booking.agentendpoint.Message;
 import com.ftn_booking.agentendpoint.Reservation;
 import com.ftn_booking.agentendpoint.ReservationLite;
 import com.ftn_booking.agentendpoint.ResponseWrapper;
+import com.ftn_booking.agentendpoint.ResponseWrapperLong;
+import com.ftn_booking.agentendpoint.ResponseWrapperSync;
 import com.ftn_booking.agentendpoint.SendMessageRequest;
 import com.ftn_booking.agentendpoint.SendMessageResponse;
 import com.ftn_booking.agentendpoint.SinchronizationObject;
@@ -137,17 +139,18 @@ public class AgentEndpointServiceImpl {
 	@ResponsePayload
 	public AgentLoginResponse agentLogin(@RequestPayload AgentLoginRequest alRequest) {
 		AgentLoginResponse response = new AgentLoginResponse();
-		ResponseWrapper retObj = new ResponseWrapper();
-
+		ResponseWrapperSync retObj = new ResponseWrapperSync();
+		SinchronizationObject synchObj = null;
+		
 		User agentUsr = userService.getByUsername(alRequest.getUserName());
 		AgentUser agent = null;
 		if(agentUsr == null) {
-			retObj.setMessage("Agent with the given email does not exist.");
+			retObj.setMessage("Agent with the given user name does not exist.");
 			retObj.setSuccess(false);
 			response.setResponseWrapper(retObj);
 			return response;
 		}
-		else if(!passwordEncoder.matches(agentUsr.getPassword(), alRequest.getPassword())) {
+		else if(!passwordEncoder.matches(alRequest.getPassword(), agentUsr.getPassword())) {
 			retObj.setMessage("Incorrect password.");
 			retObj.setSuccess(false);
 			response.setResponseWrapper(retObj);
@@ -156,15 +159,19 @@ public class AgentEndpointServiceImpl {
 		else {
 			try {
 				agent = agentUserService.getById(agentUsr.getId());
-				SinchronizationObject synchObj = createSyncObject(agentUsr, agent);
+				synchObj = createSyncObject(agentUsr, agent);
 				
 			} catch(Exception e) {
 				retObj.setMessage("Synchronization failed. Please, try again.");
 				retObj.setSuccess(false);
 				response.setResponseWrapper(retObj);
+				return response;
 			}
 		}			
 		
+		retObj.setSuccess(true);
+		retObj.setSyncObj(synchObj);
+		response.setResponseWrapper(retObj);
 		return response;
 	}
 	
@@ -287,7 +294,9 @@ public class AgentEndpointServiceImpl {
 		    
 			Path destinationFile = Paths.get("/images", imgName);
 			try {
-				Files.write(destinationFile, data);
+				if(Files.isWritable(destinationFile)) {
+					Files.write(destinationFile, data);
+				}
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -306,13 +315,13 @@ public class AgentEndpointServiceImpl {
 	@ResponsePayload
 	public ManageMonthlyPricesResponse manageMonthlyPrices(@RequestPayload ManageMonthlyPricesRequest mmpRequest) {
 		ManageMonthlyPricesResponse response = new ManageMonthlyPricesResponse();
-		ResponseWrapper retObj = new ResponseWrapper();
+		ResponseWrapperLong retObj = new ResponseWrapperLong();
 		com.ftn_booking.agentendpoint.MonthlyPrices requestMPrice = mmpRequest.getMonthlyPrice();
 		List<Long> mainServerIds = new ArrayList<Long>();
 		
 		BookingUnit unit = bookingUnitService.findById(requestMPrice.getMainServerId());
 		if(unit == null) {
-			retObj.setSuccess(false);
+			retObj.setSucess(false);
 			retObj.setMessage("Wrong booking unit data. Please try again.");
 			response.setResponseWrapper(retObj);
 			return response;
@@ -340,8 +349,8 @@ public class AgentEndpointServiceImpl {
 			isInsert = false;
 		}
 		
-		retObj.setSuccess(true);
-		retObj.setResponseBody(mainServerIds);
+		retObj.setSucess(true);
+		retObj.getMainServerId().addAll(mainServerIds);
 		if(isInsert)
 			retObj.setMessage("INSERT");
 		else
@@ -385,7 +394,9 @@ public class AgentEndpointServiceImpl {
 		return resp;
 	}
 
-	public SendMessageResponse sendMessage(SendMessageRequest smRequest) {
+	@PayloadRoot(namespace = "http://ftn-booking.com/agentEndpoint", localPart = "sendMessageRequest")
+	@ResponsePayload
+	public SendMessageResponse sendMessage(@RequestPayload SendMessageRequest smRequest) {
 		Message fromRequest = smRequest.getMessage();
 		ResponseWrapper wrapper = new ResponseWrapper();
 		SendMessageResponse response = new SendMessageResponse();
@@ -422,7 +433,9 @@ public class AgentEndpointServiceImpl {
 		return response;
 	}
 
-	public ConfirmReservationResponse confirmReservation(ConfirmReservationRequest confrRequest) {
+	@PayloadRoot(namespace = "http://ftn-booking.com/agentEndpoint", localPart = "confirmReservationRequest")
+	@ResponsePayload
+	public ConfirmReservationResponse confirmReservation(@RequestPayload ConfirmReservationRequest confrRequest) {
 		ReservationLite fromRequest = confrRequest.getReservationLite();
 		ResponseWrapper wrapper = new ResponseWrapper();
 		ConfirmReservationResponse resp = new ConfirmReservationResponse();
@@ -454,7 +467,9 @@ public class AgentEndpointServiceImpl {
 		return resp;
 	}
 
-	public CancelReservationResponse cancelReservation(CancelReservationRequest cancrRequest) {
+	@PayloadRoot(namespace = "http://ftn-booking.com/agentEndpoint", localPart = "cancelReservationRequest")
+	@ResponsePayload
+	public CancelReservationResponse cancelReservation(@RequestPayload CancelReservationRequest cancrRequest) {
 		ReservationLite fromRequest = cancrRequest.getReservationLite();
 		ResponseWrapper wrapper = new ResponseWrapper();
 		CancelReservationResponse resp = new CancelReservationResponse();

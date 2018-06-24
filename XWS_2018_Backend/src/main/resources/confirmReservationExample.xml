@@ -1,0 +1,14 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+                  xmlns:us="http://ftn-booking.com/agentEndpoint">
+    <soapenv:Header/>
+    <soapenv:Body>
+        <us:confirmReservationRequest>
+            <us:reservationLite>
+            	<us:reservationMainServerId>4</us:reservationMainServerId>
+            	<us:reservationStatus>
+            		CONFIRMED
+            	</us:reservationStatus>
+            </us:reservationLite>
+        </us:confirmReservationRequest>
+    </soapenv:Body>
+</soapenv:Envelope>

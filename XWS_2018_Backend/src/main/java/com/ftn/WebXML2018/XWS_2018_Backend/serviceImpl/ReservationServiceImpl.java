@@ -85,4 +85,12 @@ public class ReservationServiceImpl implements ReservationService{
 		return reservationRepository.findReservationsByBookingUnit(bookingUnit);
 	}
 
+	@Override
+	public Reservation confirmReservation(Reservation reservation) {
+		reservation.setReservationStatus(ReservationStatus.CONFIRMED);
+		reservation = reservationRepository.save(reservation);
+		
+		return reservation;
+	}
+
 }

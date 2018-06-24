@@ -1,0 +1,13 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+                  xmlns:us="http://ftn-booking.com/agentEndpoint">
+    <soapenv:Header/>
+    <soapenv:Body>
+        <us:sendMessageRequest>
+            <us:message>
+            	<us:senderAgentMainServerId>4</us:senderAgentMainServerId>
+            	<us:receiverUserMainServerId>2</us:receiverUserMainServerId>
+            	<us:content>Ribare Ribaru samo to reci mu</us:content>
+            </us:message>
+        </us:sendMessageRequest>
+    </soapenv:Body>
+</soapenv:Envelope>

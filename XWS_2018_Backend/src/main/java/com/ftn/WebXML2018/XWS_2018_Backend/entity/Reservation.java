@@ -2,6 +2,7 @@ package com.ftn.WebXML2018.XWS_2018_Backend.entity;
 
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -13,6 +14,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.Size;
+
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+import org.hibernate.engine.internal.Cascade;
 
 import com.ftn.WebXML2018.XWS_2018_Backend.enums.ReservationStatus;
 
@@ -47,6 +52,7 @@ public class Reservation {
 	private String subjectSurname;
 	
 	@ManyToOne(optional = true)
+	@OnDelete(action=OnDeleteAction.CASCADE)
 	private RegisteredUser registeredUser;
 	
 	@ManyToOne(optional = false)

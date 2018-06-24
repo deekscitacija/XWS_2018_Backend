@@ -11,7 +11,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -46,6 +48,7 @@ import com.ftn.WebXML2018.XWS_2018_Backend.entity.Country;
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.MonthlyPrices;
 import com.ftn.WebXML2018.XWS_2018_Backend.entity.User;
 import com.ftn.WebXML2018.XWS_2018_Backend.enums.ReservationStatus;
+import com.ftn.WebXML2018.XWS_2018_Backend.enums.UserRolesType;
 import com.ftn.WebXML2018.XWS_2018_Backend.helpClasses.Entity2SoapConverter;
 import com.ftn.WebXML2018.XWS_2018_Backend.repository.BookingUnitRepository;
 import com.ftn.WebXML2018.XWS_2018_Backend.service.AccomodationCategoryService;
@@ -139,6 +142,7 @@ public class AgentEndpointServiceImpl {
 	@ResponsePayload
 	public AgentLoginResponse agentLogin(@RequestPayload AgentLoginRequest alRequest) {
 		AgentLoginResponse response = new AgentLoginResponse();
+<<<<<<< HEAD
 		ResponseWrapperSync retObj = new ResponseWrapperSync();
 		SinchronizationObject synchObj = null;
 		
@@ -146,6 +150,17 @@ public class AgentEndpointServiceImpl {
 		AgentUser agent = null;
 		if(agentUsr == null) {
 			retObj.setMessage("Agent with the given user name does not exist.");
+=======
+		ResponseWrapper retObj = new ResponseWrapper();
+		AgentUser agent = null;
+		
+		User agentUsr = userService.getByUsername(alRequest.getUserName());
+		if(agentUsr.getUserRole().getName().equals(UserRolesType.AGENT)) {
+			agent = agentUserService.getById(agentUsr.getId());
+		}
+		if(agent == null) {
+			retObj.setMessage("Agent with the given username does not exist.");
+>>>>>>> 711b5a8bcf6def72e628986644a714427d7eb39f
 			retObj.setSuccess(false);
 			response.setResponseWrapper(retObj);
 			return response;
@@ -158,9 +173,17 @@ public class AgentEndpointServiceImpl {
 		}
 		else {
 			try {
+<<<<<<< HEAD
 				agent = agentUserService.getById(agentUsr.getId());
 				synchObj = createSyncObject(agentUsr, agent);
 				
+=======
+				SinchronizationObject synchObj = createSyncObject(agentUsr, agent);
+				retObj.setMessage("Successfull login!");
+				retObj.setSuccess(true);
+				retObj.setResponseBody(synchObj);
+				response.setResponseWrapper(retObj);
+>>>>>>> 711b5a8bcf6def72e628986644a714427d7eb39f
 			} catch(Exception e) {
 				retObj.setMessage("Synchronization failed. Please, try again.");
 				retObj.setSuccess(false);
@@ -211,7 +234,7 @@ public class AgentEndpointServiceImpl {
 					e.printStackTrace();
 				}
 			});
-				
+			
 		}catch(Exception e) {
 			e.printStackTrace();
 			return null;
@@ -360,6 +383,7 @@ public class AgentEndpointServiceImpl {
 		return response;
 	}
 
+	//C#
 	@PayloadRoot(namespace = "http://ftn-booking.com/agentEndpoint", localPart = "addLocalReservationRequest")
 	@ResponsePayload
 	public AddLocalReservationResponse addLocalReservation(@RequestPayload AddLocalReservationRequest alrRequest) throws ParseException {
@@ -385,6 +409,7 @@ public class AgentEndpointServiceImpl {
 			wrapper.setResponseBody(respBody.getId());
 			resp.setResponseWrapper(wrapper);
 		} catch(Exception e) {
+			e.printStackTrace();
 			wrapper.setMessage("Adding reservation failed. Please, try again later.");
 			wrapper.setSuccess(false);
 			wrapper.setResponseBody(null);
@@ -424,6 +449,7 @@ public class AgentEndpointServiceImpl {
 				response.setResponseWrapper(wrapper);
 			}
 		} catch(Exception e) {
+			e.printStackTrace();
 			wrapper.setMessage("Error sending message. Please, try again later.");
 			wrapper.setSuccess(false);
 			wrapper.setResponseBody(null);
@@ -445,7 +471,7 @@ public class AgentEndpointServiceImpl {
 			
 			if(reservation != null) {
 				reservation.setReservationStatus(ReservationStatus.CONFIRMED);
-				reservation = reservationService.saveReservation(reservation);
+				reservation = reservationService.confirmReservation(reservation);
 				wrapper.setMessage("Reservation confirmed!.");
 				wrapper.setSuccess(true);
 				wrapper.setResponseBody(reservation.getId());
@@ -479,7 +505,7 @@ public class AgentEndpointServiceImpl {
 			
 			if(reservation != null) {
 				reservation.setReservationStatus(ReservationStatus.CANCELED);
-				reservation = reservationService.saveReservation(reservation);
+				reservation = reservationService.cancelReservation(reservation);
 				wrapper.setMessage("Reservation canceled!.");
 				wrapper.setSuccess(true);
 				wrapper.setResponseBody(reservation.getId());
@@ -502,10 +528,9 @@ public class AgentEndpointServiceImpl {
 	}
 	
 	private Date parseDate(String dateString) throws ParseException {
-	    DateFormat df = new SimpleDateFormat("YYYY-MM-DD", Locale.ENGLISH);
-	    Date result =  df.parse(dateString);  
-	    System.out.println(result);
+		DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+		Date date = formatter.parse(dateString);
 	    
-	    return result;
+	    return date;
 	}
 }

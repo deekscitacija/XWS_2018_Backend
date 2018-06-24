@@ -27,8 +27,11 @@ import java.util.Set;
 
 import javax.jws.WebMethod;
 import javax.jws.WebService;
+import javax.servlet.ServletContext;
 import javax.xml.datatype.DatatypeConfigurationException;
 
+import org.apache.tomcat.util.http.fileupload.FileUtils;
+import org.assertj.core.error.AbstractShouldHaveTextContent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationHome;
 import org.springframework.core.io.ClassPathResource;
@@ -142,6 +145,9 @@ public class AgentEndpointServiceImpl {
 	@Autowired
 	private BookingUnitPictureService bUnitPictureService;
 	
+	@Autowired
+	ServletContext context;
+	
 	@PayloadRoot(namespace = "http://ftn-booking.com/agentEndpoint", localPart = "agentLoginRequest")
 	@ResponsePayload
 	public AgentLoginResponse agentLogin(@RequestPayload AgentLoginRequest alRequest) {
@@ -189,7 +195,7 @@ public class AgentEndpointServiceImpl {
 		List<AccomodationCategory> categories = accomodationCategoryService.getAll();
 		List<AccomodationType> types = accomodationTypeService.getAll();
 		List<BonusFeatures> features = bonusFeaturesService.getAll();
-		List<com.ftn.WebXML2018.XWS_2018_Backend.entity.Message> sentMessages = messageService.findBySenderOrRecipientNonPageable(u, true);
+		//List<com.ftn.WebXML2018.XWS_2018_Backend.entity.Message> sentMessages = messageService.findBySenderOrRecipientNonPageable(u, true);
 		List<com.ftn.WebXML2018.XWS_2018_Backend.entity.Message> recievedMessages = messageService.findBySenderOrRecipientNonPageable(u, false);
 		List<BookingUnit> bookingUnits = bookingUnitService.findBookingUnitByAgent(agentUser);
 		List<com.ftn.WebXML2018.XWS_2018_Backend.entity.Reservation> reservations = new ArrayList<>();
@@ -207,8 +213,8 @@ public class AgentEndpointServiceImpl {
 													.add(Entity2SoapConverter.convertType(type)));
 			features.stream().forEach(feature -> synchObj.getBonusFeaturesList()
 														 .add(Entity2SoapConverter.convertBonus(feature)));
-			sentMessages.stream().forEach(msg -> synchObj.getRegUserMessagesList()
-														.add(Entity2SoapConverter.convertMessage(msg, agentUser)));
+			//sentMessages.stream().forEach(msg -> synchObj.getRegUserMessagesList()
+														//.add(Entity2SoapConverter.convertMessage(msg, agentUser)));
 			recievedMessages.stream().forEach(msg -> synchObj.getRegUserMessagesList()
 														.add(Entity2SoapConverter.convertMessage(msg, agentUser)));
 			reservations.stream().forEach(res -> {
@@ -266,17 +272,21 @@ public class AgentEndpointServiceImpl {
 			return response;
 		}
 		
+		
 		Set<BonusFeatures> bonusFeatures = new HashSet<BonusFeatures>();
-		for(Iterator<Long> i = requestUnit.getBonusFeaturesMainServerIds().iterator(); i.hasNext();) {
-			Long bfId = i.next();
-			BonusFeatures bFeature = bFeaturesService.getById(bfId);
-			if(bFeature == null) {
-				retObj.setSuccess(false);
-				retObj.setMessage("Can't find the given bonus feature data on main server. Please try again.");
-				response.setResponseWrapper(retObj);
-				return response;
+		if(!(requestUnit.getBonusFeaturesMainServerIds().get(0) == -1))
+		{
+			for(Iterator<Long> i = requestUnit.getBonusFeaturesMainServerIds().iterator(); i.hasNext();) {
+				Long bfId = i.next();
+				BonusFeatures bFeature = bFeaturesService.getById(bfId);
+				if(bFeature == null) {
+					retObj.setSuccess(false);
+					retObj.setMessage("Can't find the given bonus feature data on main server. Please try again.");
+					response.setResponseWrapper(retObj);
+					return response;
+				}
+				bonusFeatures.add(bFeature);
 			}
-			bonusFeatures.add(bFeature);
 		}
 		
 		BookingUnit unit = new BookingUnit(requestUnit.getAddress(), requestUnit.getName(), requestUnit.getDescription(), 
@@ -288,52 +298,35 @@ public class AgentEndpointServiceImpl {
 		
 		for (Iterator<HMapStringStringElement> i = requestUnit.getBase64ImagesList().iterator(); i.hasNext();) {
 			HMapStringStringElement item = i.next();
-		    
-			String base64Img = item.getValue();
+
+			String base64Image = item.getValue();
 		    String imgName = item.getKey();
 		   
-		    byte[] data = Base64.getDecoder().decode(base64Img);
+		    byte[] data = Base64.getDecoder().decode(base64Image);
 		    
 		    String[] tokens = imgName.split("\\.(?=[^\\.]+$)");
 		    String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Timestamp(System.currentTimeMillis()));
 		    
-		    imgName = tokens[0] + timeStamp + tokens[1];
+		    imgName = tokens[0] + timeStamp + "." + tokens[1];
 		    
-		    
-			Path destinationFile = Paths.get("/images");
-			try {
-				File f = new File(destinationFile.toString());
-				if(!f.isDirectory()) {
-					f.mkdirs();
-				}
-				FileOutputStream fs = new FileOutputStream(f+"/");
-				fs.write(data);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			
-			/*OutputStream out = null;
-			try {
-			    try {
-					out = new BufferedOutputStream(new FileOutputStream(destinationFile.toString()));
-				} catch (FileNotFoundException e1) {
+		    String absolutePath = AgentEndpointServiceImpl.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+		    String newPath = absolutePath.substring(1);
+		    Path path = Paths.get(newPath + "../../src/main/resources/images/" + imgName);
+		    try (FileOutputStream fos = new FileOutputStream(path.toString())) {
+		    	   fos.write(data);
+		    	   //fos.close(); There is no more need for this line since you had created the instance of "fos" inside the try. And this will automatically close the OutputStream
+		    	} catch (FileNotFoundException e) {
 					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-			    try {
-					out.write(data);
+					e.printStackTrace();
 				} catch (IOException e) {
+					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-			} finally {
-			    if (out != null)
-					try {
-						out.close();
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-			}*/
+		    /*try {
+				Files.write(path, data);
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}*/		  
 			
 			BookingUnitPicture myPicture = new BookingUnitPicture(imgName, unitData);
 			bUnitPictureService.insertBookingUnitPicture(myPicture);

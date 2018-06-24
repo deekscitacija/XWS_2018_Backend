@@ -26,6 +26,7 @@ import com.ftn_booking.agentendpoint.Message;
 import com.ftn_booking.agentendpoint.RegUsrMessage;
 import com.ftn_booking.agentendpoint.RegisteredUserInfo;
 import com.ftn_booking.agentendpoint.Reservation;
+import com.ftn_booking.agentendpoint.ReservationStatus;
 
 public class Entity2SoapConverter {
 
@@ -100,6 +101,8 @@ public class Entity2SoapConverter {
 		r.setSubjectSurname(reservation.getSubjectSurname());
 		r.setMainServerId(reservation.getId());
 		r.setTotalPrice(reservation.getTotalPrice());
+		ReservationStatus stat = ReservationStatus.fromValue(reservation.getReservationStatus().name());
+		r.setReservationStatus(stat);
 		
 		return r;
 	}

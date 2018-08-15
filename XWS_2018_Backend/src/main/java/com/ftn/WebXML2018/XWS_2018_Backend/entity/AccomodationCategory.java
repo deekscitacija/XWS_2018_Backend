@@ -60,4 +60,9 @@ public class AccomodationCategory {
 	public void setStrength(Integer strength) {
 		this.strength = strength;
 	}
+
+	@Override
+	public String toString() {
+		return "AccomodationCategory [id=" + id + ", name=" + name + ", strength=" + strength + "]";
+	}
 }

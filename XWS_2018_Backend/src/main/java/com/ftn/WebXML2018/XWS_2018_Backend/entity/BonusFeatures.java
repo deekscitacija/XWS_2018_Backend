@@ -49,4 +49,8 @@ public class BonusFeatures {
 		this.name = name;
 	}
 
+	@Override
+	public String toString() {
+		return "BonusFeatures [id=" + id + ", name=" + name + "]";
+	}
 }

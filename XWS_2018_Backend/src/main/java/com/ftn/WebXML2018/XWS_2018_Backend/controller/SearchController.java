@@ -6,6 +6,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -82,13 +83,15 @@ public class SearchController {
 	@Autowired
 	private UserService userService;
 	
-	@RequestMapping(value="getBookingUnits/page={page}&num={num}", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value="getBookingUnits/page={page}&num={num}", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
 	public ResponseWrapper<Page<BookingUnitDTO>> getBookingUnits(@PathVariable int page, @PathVariable int num, @RequestParam(value = "peopleNumber", required = true) int peopleNumber,
 															  @RequestParam(value="dateFrom", required = true) String dateFrom, 
 															  @RequestParam(value="dateTo", required = true) String dateTo,
 															  @RequestParam(value="country", required = false) Long countryId,
 															  @RequestParam(value="city", required = false) Long cityId,
-															  @RequestBody AdvancedSearchWrapper advancedSearchWrapper){
+															  @RequestParam(value="types", required = false) List<Long> accomodationTypeIds,
+															  @RequestParam(value="categories", required = false) List<Long> accomodationCategoryIds,
+															  @RequestParam(value="bonusFeatures", required = false) List<Long> bonusFeaturesIds){
 		
 		if(countryId==null && cityId==null) {
 			return new ResponseWrapper<Page<BookingUnitDTO>>(null,"Morate uneti ili grad ili drzavu za pretragu.",false);
@@ -102,7 +105,7 @@ public class SearchController {
 		City city = null;
 		
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-		Date dateFromDate = null;;
+		Date dateFromDate = null;
 		try {
 			dateFromDate = dateFormat.parse(dateFrom);
 		} catch (ParseException e) {
@@ -127,7 +130,7 @@ public class SearchController {
 			}
 		}	
 		
-		Page<BookingUnitDTO> bookingUnits = bookingUnitService.findBookingUnits(city, country, peopleNumber, dateFromDate, dateToDate, advancedSearchWrapper.getSelectedAccomodationTypes(), advancedSearchWrapper.getSelectedAccomodationCategories(), advancedSearchWrapper.getSelectedBonusFeatures(),  new PageRequest(page,num));
+		Page<BookingUnitDTO> bookingUnits = bookingUnitService.findBookingUnits(city, country, peopleNumber, dateFromDate, dateToDate, accomodationTypeService.getByIds(accomodationTypeIds), accomodationCategoryService.getByIds(accomodationCategoryIds), bonusFeaturesService.getByIds(bonusFeaturesIds),  new PageRequest(page,num));
 		
 		if(bookingUnits == null) {
 			return new ResponseWrapper<Page<BookingUnitDTO>>(null,"Neuspesno vracene smestajne jedinice.",false);

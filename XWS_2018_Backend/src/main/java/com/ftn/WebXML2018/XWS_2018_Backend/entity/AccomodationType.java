@@ -48,5 +48,9 @@ public class AccomodationType {
 	public void setName(String name) {
 		this.name = name;
 	}
-	
+
+	@Override
+	public String toString() {
+		return "AccomodationType [id=" + id + ", name=" + name + "]";
+	}	
 }

@@ -10,5 +10,6 @@ import com.ftn.WebXML2018.XWS_2018_Backend.enums.AttributesType;
 public interface AccomodationTypeRepository extends JpaRepository<AccomodationType, Long> {
 	
 	public AccomodationType getByName(String name);
+	public List<AccomodationType> findByIdIn(List<Long> accomodationTypeIds);
 	
 }

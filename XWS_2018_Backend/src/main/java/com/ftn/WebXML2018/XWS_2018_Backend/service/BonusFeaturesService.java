@@ -19,4 +19,6 @@ public interface BonusFeaturesService {
 	public BonusFeatures updateAttribute(BonusFeatures attribute);
 	
 	public boolean deleteAttribute(Long id);
+	
+	public List<BonusFeatures> getByIds(List<Long> bonusFeaturesIds);
 }

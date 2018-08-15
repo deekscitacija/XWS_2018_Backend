@@ -56,4 +56,13 @@ public class AccomodationTypeServiceImpl implements AccomodationTypeService {
 	public List<AccomodationType> getAll() {
 		return repository.findAll();
 	}
+
+	@Override
+	public List<AccomodationType> getByIds(List<Long> accomodationTypeIds) {
+		if(accomodationTypeIds!=null) {
+			return repository.findByIdIn(accomodationTypeIds);
+		}
+		
+		return null;
+	}
 }

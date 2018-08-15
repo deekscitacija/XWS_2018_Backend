@@ -57,4 +57,13 @@ public class AccomodationCategoryServiceImpl implements AccomodationCategoryServ
 	public List<AccomodationCategory> getAll() {
 		return repository.findAll();
 	}
+
+	@Override
+	public List<AccomodationCategory> getByIds(List<Long> accomodationCategoryIds) {
+		if(accomodationCategoryIds!=null) {
+			return repository.findByIdIn(accomodationCategoryIds);
+		}
+		
+		return null;
+	}
 }

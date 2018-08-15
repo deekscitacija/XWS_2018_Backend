@@ -56,4 +56,13 @@ public class BonusFeaturesServiceImpl implements BonusFeaturesService{
 		return repository.findAll();
 	}
 
+	@Override
+	public List<BonusFeatures> getByIds(List<Long> bonusFeaturesIds) {
+		if(bonusFeaturesIds!=null) {
+			return repository.findByIdIn(bonusFeaturesIds);
+		}
+		
+		return null;
+	}
+
 }

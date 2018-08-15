@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,7 +28,7 @@ public class AccomodationTypeController {
 	@Autowired
 	private AccomodationTypeService service;
 	
-	
+	@PreAuthorize("hasAuthority('ADMIN')")
 	@PostMapping("/new")
 	public ResponseEntity<?> createNewAccomodation(@RequestBody AccomodationType ACtype) {
 		ResponseWrapper<AccomodationType> ret = null;
@@ -118,6 +119,7 @@ public class AccomodationTypeController {
 		}
 	}
 	
+	@PreAuthorize("hasAuthority('ADMIN')")
 	@PutMapping("/update")
 	public ResponseEntity<?> update(@RequestBody AccomodationType ACType) {
 		ResponseWrapper<AccomodationType> ret = null;
@@ -142,6 +144,7 @@ public class AccomodationTypeController {
 		}
 	}
 	
+	@PreAuthorize("hasAuthority('ADMIN')")
 	@DeleteMapping("/delete/{id}")
 	public ResponseEntity<?> delete(@PathVariable("id") Long id) {
 		ResponseWrapper<Boolean> ret = null;

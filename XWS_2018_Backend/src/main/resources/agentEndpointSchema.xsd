@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+    xmlns:tns="http://ftn-booking.com/agentEndpoint"
+    targetNamespace="http://ftn-booking.com/agentEndpoint">
+
+    <xs:element name="manageMonthlyPricesRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="monthlyPrice" type="tns:MonthlyPrices"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="MonthlyPrices">
+        <xs:sequence>
+            <xs:element name="mainServerId" type="xs:long"/>
+            <xs:element name="year" type="xs:int"/>
+            <xs:element maxOccurs="unbounded" minOccurs="1" name="monthlyPrices" type="xs:double"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="ResponseWrapper">
+        <xs:sequence>
+            <xs:element name="success" type="xs:boolean"/>
+            <xs:element name="message" type="xs:string"/>
+            <xs:element name="responseBody" type="xs:anyType"/>
+        </xs:sequence>
+    </xs:complexType>
+
+
+    <xs:complexType name="ResponseWrapperLong">
+        <xs:sequence>
+            <xs:element name="sucess" type="xs:boolean"/>
+            <xs:element name="message" type="xs:string"/>
+            <xs:element name="mainServerId" type="xs:long" maxOccurs="unbounded" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="manageMonthlyPricesResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="responseWrapper" type="tns:ResponseWrapperLong"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="addBookingUnitRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="bookingUnit" type="tns:BookingUnit"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="hMapStringStringElement">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="key" type="xs:string"/>
+            <xs:element minOccurs="0" name="value" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="BookingUnit">
+        <xs:sequence>
+            <xs:element name="name" type="xs:string"/>
+            <xs:element name="cityMainServerId" type="xs:long"/>
+            <xs:element name="address" type="xs:string"/>
+            <xs:element name="description" type="xs:string"/>
+            <xs:element name="peopleNo" type="xs:int"/>
+            <xs:element name="agentMainServerId" type="xs:long"/>
+            <xs:element name="accTypeMainServerId" type="xs:long"/>
+            <xs:element name="accCategoryMainServerId" type="xs:long"/>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="bonusFeaturesMainServerIds"
+                type="xs:long"/>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="base64ImagesList"
+                type="tns:hMapStringStringElement"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:element name="addBookingUnitResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="responseWrapper" type="tns:ResponseWrapper"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="addLocalReservationRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="localReservation" type="tns:Reservation"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="Reservation">
+        <xs:sequence>
+            <xs:element name="bookingUnitMainServerId" type="xs:long"/>
+            <xs:element name="reserveeFirstName" type="xs:string"/>
+            <xs:element name="reserveeLastName" type="xs:string"/>
+            <xs:element name="dateFrom" type="xs:string"/>
+            <xs:element name="dateTo" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:element name="addLocalReservationResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="responseWrapper" type="tns:ResponseWrapper"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="sendMessageRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="message" type="tns:Message"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="Message">
+        <xs:sequence>
+            <xs:element name="senderAgentMainServerId" type="xs:long"/>
+            <xs:element name="receiverUserMainServerId" type="xs:long"/>
+            <xs:element name="content" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:element name="sendMessageResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="responseWrapper" type="tns:ResponseWrapper"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="confirmReservationRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="reservationLite" type="tns:ReservationLite"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:simpleType name="ReservationStatus" final="restriction">
+        <xs:restriction base="xs:NMTOKEN">
+            <xs:enumeration value="WAITING"/>
+            <xs:enumeration value="CONFIRMED"/>
+            <xs:enumeration value="CANCELED"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="ReservationLite">
+        <xs:sequence>
+            <xs:element name="reservationMainServerId" type="xs:long"/>
+            <xs:element name="reservationStatus" type="tns:ReservationStatus"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:element name="confirmReservationResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="responseWrapper" type="tns:ResponseWrapper"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="cancelReservationRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="reservationLite" type="tns:ReservationLite"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="cancelReservationResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="responseWrapper" type="tns:ResponseWrapper"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="AccomodationType">
+        <xs:sequence>
+            <xs:element name="name" type="xs:string"/>
+            <xs:element name="mainServerId" type="xs:long"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="AccomodationCategory">
+        <xs:sequence>
+            <xs:element name="name" type="xs:string"/>
+            <xs:element name="mainServerId" type="xs:long"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="BonusFeature">
+        <xs:sequence>
+            <xs:element name="name" type="xs:string"/>
+            <xs:element name="mainServerId" type="xs:long"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="Country">
+        <xs:sequence>
+            <xs:element name="name" type="xs:string"/>
+            <xs:element name="mainServerId" type="xs:long"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="City">
+        <xs:sequence>
+            <xs:element name="name" type="xs:string"/>
+            <xs:element name="postalCode" type="xs:string"/>
+            <xs:element name="mainServerId" type="xs:long"/>
+            <xs:element name="country" type="tns:Country"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="RegisteredUserInfo">
+        <xs:sequence>
+            <xs:element name="mainServerId" type="xs:long"/>
+            <xs:element name="userName" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="RegUsrMessage">
+        <xs:sequence>
+            <xs:element name="mainServerId" type="xs:long"/>
+            <xs:element name="content" type="xs:string"/>
+            <xs:element name="regUsrInfo" type="tns:RegisteredUserInfo"/>
+            <xs:element name="agentUserMainServerId" type="xs:long"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="MainServerReservation">
+        <xs:sequence>
+            <xs:element name="mainServerId" type="xs:long"/>
+            <xs:element name="from" type="xs:dateTime"/>
+            <xs:element name="to" type="xs:dateTime"/>
+            <xs:element name="totalPrice" type="xs:double"/>
+            <xs:element name="reservationStatus" type="tns:ReservationStatus"/>
+            <xs:element name="subjectName" type="xs:string"/>
+            <xs:element name="subjectSurname" type="xs:string"/>
+            <xs:element name="bookingUnitMainServerId" type="xs:long"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="SinchronizationObject">
+        <xs:sequence>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="accTypesList"
+                type="tns:AccomodationType"/>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="accCatsList"
+                type="tns:AccomodationCategory"/>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="bonusFeaturesList"
+                type="tns:BonusFeature"/>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="countriesList" type="tns:Country"/>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="citiesList" type="tns:City"/>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="regUserMessagesList"
+                type="tns:RegUsrMessage"/>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="reservationsList"
+                type="tns:MainServerReservation"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:element name="agentLoginRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="userName" type="xs:string"/>
+                <xs:element name="password" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="responseWrapperSync">
+        <xs:sequence>
+            <xs:element name="success" type="xs:boolean"/>
+            <xs:element name="message" type="xs:string"/>
+            <xs:element name="syncObj" type="tns:SinchronizationObject"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="agentLoginResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="responseWrapper" type="tns:responseWrapperSync"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

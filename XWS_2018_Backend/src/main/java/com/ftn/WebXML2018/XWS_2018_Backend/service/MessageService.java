@@ -1,5 +1,7 @@
 package com.ftn.WebXML2018.XWS_2018_Backend.service;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -12,4 +14,5 @@ public interface MessageService {
 	
 	public Page<Message> findBySenderOrRecipient(User user, boolean sender, Pageable pageable);
 
+	public List<Message> findBySenderOrRecipientNonPageable(User user, boolean sender);
 }

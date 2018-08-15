@@ -1,0 +1,15 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+                  xmlns:us="http://ftn-booking.com/agentEndpoint">
+    <soapenv:Header/>
+    <soapenv:Body>
+        <us:addLocalReservationRequest>
+            <us:localReservation>
+            	<us:bookingUnitMainServerId>1</us:bookingUnitMainServerId>
+            	<us:reserveeFirstName>Milos</us:reserveeFirstName>
+            	<us:reserveeLastName>Ribar</us:reserveeLastName>
+            	<us:dateFrom>2101-06-30</us:dateFrom>
+            	<us:dateTo>2101-07-30</us:dateTo>
+            </us:localReservation>
+        </us:addLocalReservationRequest>
+    </soapenv:Body>
+</soapenv:Envelope>

@@ -21,4 +21,6 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long>{
 
 	@Query("from Reservation as r where r.bookingUnit = ?1 and (r.reservationStatus = 'WAITING' or r.reservationStatus = 'CONFIRMED') and ((r.fromDate <= ?2 and r.toDate >= ?2 and r.toDate <= ?3) or (r.fromDate >= ?2  and r.toDate <= ?3) or (r.fromDate >= ?2 and r.fromDate <= ?3 and r.toDate >= ?3) or (r.fromDate <= ?2 and r.toDate >= ?3))")
 	public List<Reservation> findCriticalReservations(BookingUnit bookingUnit, Date startDate, Date endDate);
+	
+	public List<Reservation> findReservationsByBookingUnit(BookingUnit bookingUnit);
 }
